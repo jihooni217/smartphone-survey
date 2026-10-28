@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>스마트폰 사용 경험 설문</title>
+<style>
+  :root { --bg:#fff; --fg:#1a1a1a; --muted:#555; --line:#d0d7de; --accent:#1f6feb; --soft:#eaf2ff; --ok:#1a7f37; --err:#cf222e; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#111; --fg:#eee; --muted:#bbb; --line:#3a3f45; --accent:#4c8dff; --soft:#16233a; --ok:#3fb950; --err:#ff6b6b; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:18px/1.6 system-ui, sans-serif; }
+  main { max-width:640px; margin:0 auto; }
+  h1 { font-size:1.5rem; margin:8px 0 16px; }
+  section { border:1px solid var(--line); border-radius:12px; margin:0 0 20px; padding:16px; }
+  h2 { font-size:1.15rem; margin:0 0 12px; }
+  .hint { color:var(--muted); font-size:.95rem; margin:4px 0 8px; }
+  .intro { background:var(--soft); border-radius:8px; padding:4px 16px; }
+  .intro ul { padding-left:22px; margin:8px 0; }
+  .field { margin:0 0 16px; }
+  .field > .label { font-weight:600; margin-bottom:6px; }
+  /* 큰 버튼 모양 선택지 */
+  .choices { display:flex; flex-wrap:wrap; gap:8px; }
+  .choices label { position:relative; }
+  .choices input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+  .choices span { display:inline-block; min-height:48px; padding:10px 16px; border:2px solid var(--line); border-radius:10px; }
+  .choices input:checked + span { border-color:var(--accent); background:var(--soft); font-weight:600; }
+  .choices input:focus-visible + span { outline:3px solid var(--accent); outline-offset:2px; }
+  .task { padding:12px 0; border-top:1px solid var(--line); }
+  .task:first-of-type { border-top:0; padding-top:0; }
+  .task .label { font-weight:600; margin-bottom:8px; }
+  textarea { width:100%; min-height:96px; padding:10px; font:inherit; border:2px solid var(--line); border-radius:10px; background:var(--bg); color:var(--fg); }
+  .consent { display:flex; gap:10px; align-items:flex-start; font-weight:600; }
+  .consent input { width:24px; height:24px; margin-top:4px; flex:none; }
+  button { width:100%; min-height:56px; font:inherit; font-weight:700; border:0; border-radius:12px; background:var(--accent); color:#fff; cursor:pointer; }
+  button:disabled { opacity:.5; }
+  #msg { margin-top:12px; font-weight:600; }
+  .err { color:var(--err); }
+  #thanks { display:none; text-align:center; padding:48px 16px; }
+  #thanks h2 { font-size:1.4rem; }
+</style>
+</head>
+<body>
+<main>
+<h1>스마트폰 사용 경험 설문</h1>
+
+<form id="f" novalidate>
+  <section>
+    <div class="intro">
+      <p>안녕하세요. 대구대학교 컴퓨터소프트웨어 전공 학생들입니다.</p>
+      <p>저희는 누구나 스마트폰을 더 쉽고 안전하게 쓸 수 있도록 돕는 방법을 찾는 프로젝트를 진행하고 있습니다.
+        평소 스마트폰을 쓰시면서 <strong>편했던 점과 막혔던 점</strong>을 들려주시면,
+        실제로 필요한 도움이 무엇인지 정하는 데 큰 힘이 됩니다.</p>
+      <ul>
+        <li>5분 정도 걸립니다.</li>
+        <li>이름이나 연락처는 묻지 않습니다.</li>
+        <li>답하기 어려운 질문은 넘어가셔도 괜찮습니다.</li>
+        <li>응답은 이름 없이 정리되어 이 프로젝트의 분석 자료로 보관되며, 결과 보고서에 통계 형태로 실릴 수 있습니다.</li>
+      </ul>
+      <p>시간 내 주셔서 감사합니다.</p>
+    </div>
+    <p class="hint">글로 적는 칸에는 이름·연락처·주소를 적지 말아 주세요.</p>
+    <label class="consent"><input type="checkbox" name="consent"> 위 내용을 읽었고 응답에 동의합니다</label>
+  </section>
+
+  <section>
+    <h2>1. 기본 정보</h2>
+    <div class="field"><div class="label">연령대</div><div class="choices" data-radio="age_band"></div></div>
+    <div class="field"><div class="label">쓰시는 휴대폰</div><div class="choices" data-radio="device"></div></div>
+    <div class="field"><div class="label">스마트폰을 쓰신 지</div><div class="choices" data-radio="usage_years"></div></div>
+  </section>
+
+  <section>
+    <h2>2. 스마트폰으로 주로 무엇을 하시나요?</h2>
+    <p class="hint">예: 카톡, 유튜브, 사진 찍기, 뉴스 보기</p>
+    <textarea name="q1_frequent" maxlength="1000"></textarea>
+  </section>
+
+  <section>
+    <h2>3. 아래 일들을 해 보신 적이 있나요?</h2>
+    <p class="hint">하나씩 가장 가까운 것을 골라 주세요.</p>
+    <div id="q2"></div>
+  </section>
+
+  <section>
+    <h2>4. 어려워서 가족이나 다른 사람에게 부탁하시는 일이 있나요?</h2>
+    <p class="hint">최근에 부탁하신 일이 있으면 함께 적어 주세요.</p>
+    <textarea name="q3_ask_others" maxlength="1000"></textarea>
+  </section>
+
+  <section id="elder" hidden>
+    <h2>4-1. 부모님 등 60대 이상 가족분이 스마트폰 때문에 도움을 청하시는 일이 있나요?</h2>
+    <p class="hint">40·50대이신 분께만 여쭙습니다. 어떤 일을 자주 물어보시는지, 어디서 막히시는지 적어 주세요.</p>
+    <textarea name="q6_elder_family" maxlength="1000"></textarea>
+  </section>
+
+  <section>
+    <h2>5. 잘못 누를까 봐 걱정됐던 화면이 있나요?</h2>
+    <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
+    <textarea name="q4_scary" maxlength="1000"></textarea>
+  </section>
+
+  <section>
+    <h2>6. AI(제미나이, ChatGPT, 빅스비 등)에게 무언가를 물어보신 적이 있나요?</h2>
+    <div class="field"><div class="choices" data-radio="q5_ai_used"></div></div>
+    <p class="hint"><strong>있으시면:</strong> 무엇을 물어보셨고, 알려 준 대로 하니 되셨나요?<br>
+      <strong>없으시면:</strong> 휴대폰 화면을 보여 주면 무엇을 누를지 알려 주는 AI가 있다면 써 보시겠어요? 그 이유도 적어 주세요.</p>
+    <textarea name="q5_detail" maxlength="1000"></textarea>
+  </section>
+
+  <button type="submit">제출하기</button>
+  <div id="msg" role="status"></div>
+</form>
+
+<div id="thanks" role="status">
+  <h2>응답해 주셔서 감사합니다.</h2>
+  <p>소중한 의견은 프로젝트에 잘 반영하겠습니다.<br>이제 이 창을 닫으셔도 됩니다.</p>
+</div>
+</main>
+
+<script>
+// ── 설정: 설문용 Supabase 프로젝트 dap-survey (알바가드 프로젝트 아님) ──
+// 공개용(publishable) 키만 넣는다. secret/service_role 키는 절대 넣지 않는다.
+// 웹에서는 응답을 넣기만 할 수 있다 (schema.sql 의 RLS).
+const SUPABASE_URL = "https://ymxxwofzpibaffhzcgwi.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_3QVy3gh9Ye0DxglzC7XtZA_YaIeerDe";
+
+const RADIOS = {
+  age_band: ["40대", "50대", "60대", "70대", "80대 이상"],
+  device: ["갤럭시(안드로이드)", "아이폰", "모름"],
+  usage_years: ["1년 미만", "1~5년", "5년 이상"],
+  q5_ai_used: ["있음", "없음"],
+};
+const TASKS = ["카톡으로 사진 보내기", "카톡 음성메시지 보내기", "글씨 크게 하기", "앱 설치하기",
+  "와이파이 연결하기", "기차·버스 표 예매", "병원 예약·조회", "정부24 등 증명서 발급",
+  "은행 앱 잔액 조회", "은행 앱 송금"];
+// 저장 값은 그대로 두고 화면 문구만 바꾼다 (분석할 때 값이 섞이지 않게)
+const LEVELS = [["혼자 할 수 있음", "혼자 할 수 있음"], ["도움 받으면 함", "도움을 받으면 할 수 있음"],
+  ["해 봤는데 포기", "해 봤는데 포기함"], ["안 해 봄", "안 해 봄"]];
+
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const choice = (name, value, text) =>
+  `<label><input type="radio" name="${name}" value="${esc(value)}"><span>${esc(text)}</span></label>`;
+
+for (const [name, opts] of Object.entries(RADIOS)) {
+  document.querySelector(`[data-radio="${name}"]`).innerHTML = opts.map(o => choice(name, o, o)).join("");
+}
+document.getElementById("q2").innerHTML = TASKS.map((t, i) =>
+  `<div class="task" role="radiogroup" aria-label="${esc(t)}"><div class="label">${esc(t)}</div>
+   <div class="choices">${LEVELS.map(([v, txt]) => choice(`q2_${i}`, v, txt)).join("")}</div></div>`).join("");
+
+const f = document.getElementById("f"), msg = document.getElementById("msg");
+const val = n => { const e = f.elements[n]; return (e && e.value || "").trim() || null; };
+
+// 4-1 은 40·50대를 골랐을 때만 보인다. 다른 연령대로 바꾸면 적은 내용도 지운다.
+const elder = document.getElementById("elder");
+const isMiddleAge = () => ["40대", "50대"].includes(val("age_band"));
+f.addEventListener("change", e => {
+  if (e.target.name !== "age_band") return;
+  elder.hidden = !isMiddleAge();
+  if (elder.hidden) f.elements.q6_elder_family.value = "";
+});
+
+f.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!f.elements.consent.checked) {
+    show("맨 위의 '응답에 동의합니다'에 체크해 주세요.");
+    f.elements.consent.focus();
+    return;
+  }
+  const tasks = {};
+  TASKS.forEach((t, i) => { const v = val(`q2_${i}`); if (v) tasks[t] = v; });
+  const row = {
+    consent: true,
+    age_band: val("age_band"), device: val("device"), usage_years: val("usage_years"),
+    q1_frequent: val("q1_frequent"), q2_tasks: tasks,
+    q3_ask_others: val("q3_ask_others"), q4_scary: val("q4_scary"),
+    q5_ai_used: val("q5_ai_used"), q5_detail: val("q5_detail"),
+  };
+  if (isMiddleAge() && val("q6_elder_family")) row.q6_elder_family = val("q6_elder_family");
+  const btn = f.querySelector("button");
+  btn.disabled = true; btn.textContent = "제출하는 중…"; show("");
+  try {
+    const r = await fetch(`${SUPABASE_URL}/rest/v1/survey_responses`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: SUPABASE_ANON_KEY,
+                 Authorization: `Bearer ${SUPABASE_ANON_KEY}`, Prefer: "return=minimal" },
+      body: JSON.stringify(row),
+    });
+    if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
+    // 같은 응답이 두 번 저장되지 않게 설문 화면을 닫는다
+    f.style.display = "none";
+    document.getElementById("thanks").style.display = "block";
+    window.scrollTo(0, 0);
+  } catch (err) {
+    console.error(err);
+    show("제출이 되지 않았습니다. 인터넷 연결을 확인하시고 잠시 뒤 다시 눌러 주세요.");
+    btn.disabled = false; btn.textContent = "제출하기";
+  }
+});
+function show(t) { msg.textContent = t; msg.className = t ? "err" : ""; }
+</script>
+</body>
+</html>
