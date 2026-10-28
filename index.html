@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#faf0e6">
+<meta name="color-scheme" content="light only">
 <title>스마트폰 사용 경험 설문</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
@@ -17,14 +18,14 @@
     글꼴: Pretendard 한 가지 (굵기로 역할 구분)   간격: 4px 단위 (8·12·16·20·24·32·40)
     글자: 18 보조 · 20 본문 · 24 질문 · 32 과업 이름 · 30 제목
   */
+  /* 바탕은 리넨색(#FAF0E6)으로 고정한다. 휴대폰이 다크 모드여도 바뀌지 않는다 (10/28 팀 결정).
+     팀 의견이 "시스템 설정을 따르자"와 "통일하자"로 갈렸고, 통일하되 흰색보다 눈부심이 덜한 미색으로 정했다.
+     누를 수 있는 선택지·입력 칸은 흰색(--field)으로 두어 바탕과 구분한다. */
   :root {
-    --bg:#ffffff; --band:#f2f2f0; --ink:#111111; --sub:#444444; --line:#8a8a8a;
+    color-scheme:light only;
+    --bg:#faf0e6; --band:#efe2d2; --field:#ffffff; --ink:#111111; --sub:#3f3a35; --line:#7d746b;
     --pick:#ffd84d; --pick-ink:#111111; --btn:#111111; --btn-ink:#ffffff;
     --font:"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg:#121212; --band:#000000; --ink:#f4f4f4; --sub:#c8c8c8; --line:#8a8a8a;
-            --pick:#ffd84d; --pick-ink:#111111; --btn:#ffd84d; --btn-ink:#111111; }
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
@@ -46,7 +47,7 @@
   .intro p { margin:16px 0 0; }
   .facts { margin:16px 0 0; padding-left:24px; color:var(--sub); font-size:18px; }
   .facts li { margin:6px 0; }
-  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px; border:3px solid var(--ink);
+  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px; border:3px solid var(--ink); background:var(--field);
              border-radius:12px; font-weight:700; cursor:pointer; }
   .consent input { width:32px; height:32px; flex:none; accent-color:#111; }
   .note { font-size:18px; color:var(--sub); margin:12px 0 0; }
@@ -64,7 +65,7 @@
   .choice { position:relative; display:block; }
   .choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
   .choice span { display:flex; align-items:center; gap:12px; min-height:60px; padding:12px 16px;
-                 border:2px solid var(--line); border-radius:12px; background:var(--bg); font-weight:600; }
+                 border:2px solid var(--line); border-radius:12px; background:var(--field); font-weight:600; }
   .choice span::before { content:""; flex:none; width:28px; height:28px; border:2px solid var(--line); border-radius:50%; }
   .choice input[type=checkbox] + span::before { border-radius:6px; }
   .choice input:checked + span { background:var(--pick); color:var(--pick-ink); border:3px solid var(--ink); font-weight:800; }
@@ -79,14 +80,14 @@
   .deck-nav { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-top:20px; }
   .btn { min-height:60px; font:inherit; font-weight:800; border-radius:12px; cursor:pointer; }
   .btn-main { border:0; background:var(--btn); color:var(--btn-ink); }
-  .btn-sub { border:2px solid var(--line); background:var(--bg); color:var(--ink); }
+  .btn-sub { border:2px solid var(--line); background:var(--field); color:var(--ink); }
   .btn-sub:disabled { visibility:hidden; }
   .deck-done { margin-top:24px; padding:20px; border-radius:12px; background:var(--band); }
   .deck-done p { margin:0 0 12px; font-weight:700; }
   .gate { margin:12px 0 0; padding:16px; border-radius:12px; background:var(--band); color:var(--ink); }
 
   textarea { width:100%; min-height:120px; margin-top:16px; padding:16px; font:inherit; color:var(--ink);
-             background:var(--bg); border:2px solid var(--line); border-radius:12px; resize:vertical; }
+             background:var(--field); border:2px solid var(--line); border-radius:12px; resize:vertical; }
   textarea:focus { outline:none; border:3px solid var(--ink); }
 
   .submit-row { padding:32px 20px 24px; }
@@ -94,7 +95,6 @@
             border:0; border-radius:12px; background:var(--btn); color:var(--btn-ink); cursor:pointer; }
   .submit:disabled { opacity:.5; cursor:default; }
   #msg { margin-top:16px; font-weight:800; color:#b00020; }
-  @media (prefers-color-scheme: dark) { #msg { color:#ff8a80; } }
 
   #thanks { display:none; padding:80px 20px; }
   #thanks h2 { font-size:30px; margin:0 0 12px; }
