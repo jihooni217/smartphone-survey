@@ -163,40 +163,38 @@
       <h2>부모님 등 60대 이상 가족분이 휴대폰 때문에 도와 달라고 하시는 일이 있으면 모두 골라 주세요</h2>
       <p class="hint">여러 개 골라도 돼요. 그런 일이 없으시면 맨 아래 <strong>"도와 달라고 하시는 일이 없어요"</strong>를 골라 주세요.</p>
       <div class="stack" id="elder-choices" style="margin-top:20px"></div>
-      <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요</div>
+      <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요 <span style="font-weight:400; color:var(--sub)">(선택)</span></div>
       <textarea name="q6_elder_family" maxlength="1000" aria-label="그 밖에 가족이 부탁하는 일" style="margin-top:0"></textarea>
     </div>
   </section>
 
-  <section class="block" data-step="other">
-    <div class="q-num">질문 3</div>
-    <h2>위에 없는 일 중에 막혔던 일이 있으면 적어 주세요</h2>
-    <p class="hint">없으시면 넘어가셔도 돼요.</p>
-    <textarea name="q2_other" maxlength="1000" aria-label="목록에 없는 막힌 일"></textarea>
-  </section>
-
-  <section class="block" data-step="recent">
-    <div class="q-num">질문 4</div>
-    <h2>최근에 휴대폰으로 하다가 다른 사람한테 부탁한 일이 있으면, 가장 최근 한 번만 적어 주세요</h2>
-    <p class="hint">예: 카톡에서 사진 여러 장 보내기</p>
-    <textarea name="q3_ask_others" maxlength="1000" aria-label="가장 최근에 부탁한 일"></textarea>
-  </section>
-
+  <!-- 10/28: 글로 적는 칸은 서술형 무응답이 많아(Pew 평균 약 18%) 줄이고, 고르기로 바꿨다. 남은 글 칸은 모두 선택. -->
   <section class="block" data-step="scary">
-    <div class="q-num">질문 5</div>
+    <div class="q-num">질문 3</div>
     <h2>잘못 누를까 봐 겁났던 화면이 있으세요?</h2>
-    <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
-    <textarea name="q4_scary" maxlength="1000" aria-label="겁났던 화면"></textarea>
+    <p class="hint">해당하는 것을 모두 골라 주세요.</p>
+    <div class="stack" id="scary-choices" style="margin-top:20px"></div>
+    <div id="scary-other" hidden>
+      <p class="hint" style="margin-top:16px">어떤 화면이었는지 짧게 적어 주세요. <strong>(선택)</strong></p>
+      <textarea name="q4_scary" maxlength="1000" aria-label="그 밖에 겁났던 화면" style="margin-top:8px; min-height:80px"></textarea>
+    </div>
   </section>
 
   <section class="block" data-step="ai">
-    <div class="q-num">질문 6</div>
+    <div class="q-num">질문 4</div>
     <h2>제미나이, ChatGPT, 빅스비 같은 AI에게 휴대폰 쓰는 법을 물어보신 적 있으세요?</h2>
     <div class="choices" data-radio="q5_ai_used" style="margin-top:20px"></div>
     <div id="ai-detail" hidden>
-      <p class="hint" style="margin-top:20px">무엇을 물어보셨어요? 알려 준 대로 해 보니 됐나요?</p>
-      <textarea name="q5_detail" maxlength="1000" aria-label="AI에게 물어본 것과 결과" style="margin-top:8px"></textarea>
+      <div class="sub-label">알려 준 대로 해 보니 어땠나요?</div>
+      <div class="stack" data-radio="q5_result"></div>
     </div>
+  </section>
+
+  <section class="block" data-step="other">
+    <div class="q-num">질문 5 · 선택</div>
+    <h2>위에 없는 일 중에 막혔거나 다른 사람에게 부탁한 일이 더 있으면 적어 주세요</h2>
+    <p class="hint">없으시면 넘어가셔도 돼요. 예: 사진을 컴퓨터로 옮기기</p>
+    <textarea name="q2_other" maxlength="1000" aria-label="그 밖에 막혔거나 부탁한 일"></textarea>
   </section>
 
   <!-- 대신 입력한 응답을 분석 때 구분하려고 묻는다. 기본 정보에 두면 어색해서 마지막에 둔다. -->
@@ -233,7 +231,11 @@ const RADIOS = {
   device: [["갤럭시(안드로이드)", "갤럭시(안드로이드)"], ["아이폰", "아이폰"], ["잘 모르겠어요", "모름"]],
   filled_by: [["제가 직접 했어요", "직접"], ["가족이 옆에서 도와줬어요", "도움"], ["가족이 대신 입력했어요", "대신"]],
   q5_ai_used: [["있어요", "있음"], ["없어요", "없음"]],
+  q5_result: [["알려 준 대로 해서 됐어요", "됨"], ["됐다 안 됐다 해요", "반반"], ["잘 안 됐어요", "안 됨"], ["잘 모르겠어요", "모름"]],
 };
+// 겁났던 화면 (여러 개). 근거가 확인된 것만 넣었다: 송금·결제 불편, 금융 사칭 문자·링크(스미싱) 등. "광고"는 근거를 못 찾아 뺐다.
+const SCARY = ["돈 보내는 화면", "결제하는 화면", "비밀번호·본인인증 화면", "주민번호·계좌번호 같은 개인정보를 넣는 화면", "모르는 문자나 링크"];
+const SCARY_OTHER = "기타", SCARY_NONE = "없어요";
 // 과업 14개 (저장 키 = 과업 이름). 분석할 때 이 이름을 그대로 쓴다.
 const GROUPS = [
   ["사람들과 연락", ["카톡으로 사진 보내기", "카톡 음성메시지 보내기", "카톡 영상통화 걸기", "새 전화번호 저장하기"]],
@@ -259,6 +261,7 @@ for (const [name, opts] of Object.entries(RADIOS)) {
   document.querySelector(`[data-radio="${name}"]`).innerHTML = opts.map(([txt, v]) => choice("radio", name, v, txt)).join("");
 }
 $("elder-choices").innerHTML = [...TASKS.map(t => t.name), NONE_ELDER].map(t => choice("checkbox", "elder", t, t)).join("");
+$("scary-choices").innerHTML = [...SCARY, SCARY_OTHER, SCARY_NONE].map(t => choice("checkbox", "scary", t, t)).join("");
 
 const f = $("f"), msg = $("msg");
 const val = n => { const e = f.elements[n]; return (e && e.value || "").trim() || null; };
@@ -305,10 +308,20 @@ $("deck-prev").addEventListener("click", () => { if (idx > 0) { idx--; renderCar
 $("deck-review").addEventListener("click", () => { idx = 0; renderCard(); });
 
 // "없어요"를 고르면 다른 선택을 지우고, 다른 걸 고르면 "없어요"를 지운다
-$("elder-choices").addEventListener("change", e => {
-  const boxes = [...$("elder-choices").querySelectorAll("input")];
-  if (e.target.value === NONE_ELDER && e.target.checked) boxes.forEach(b => { if (b !== e.target) b.checked = false; });
-  else if (e.target.checked) boxes.find(b => b.value === NONE_ELDER).checked = false;
+function exclusiveNone(boxId, noneValue) {
+  $(boxId).addEventListener("change", e => {
+    const boxes = [...$(boxId).querySelectorAll("input")];
+    if (e.target.value === noneValue && e.target.checked) boxes.forEach(b => { if (b !== e.target) b.checked = false; });
+    else if (e.target.checked) boxes.find(b => b.value === noneValue).checked = false;
+  });
+}
+exclusiveNone("elder-choices", NONE_ELDER);
+exclusiveNone("scary-choices", SCARY_NONE);
+const checkedValues = boxId => [...$(boxId).querySelectorAll("input:checked")].map(b => b.value);
+// "기타"를 골랐을 때만 짧게 적는 칸을 보여 준다
+$("scary-choices").addEventListener("change", () => {
+  $("scary-other").hidden = !checkedValues("scary-choices").includes(SCARY_OTHER);
+  if ($("scary-other").hidden) f.elements.q4_scary.value = "";
 });
 
 // 과업 카드(본인 기준)는 모든 나이대가 답한다. 40·50대에게는 가족 질문(2-2)을 더 보여 준다.
@@ -328,7 +341,7 @@ f.addEventListener("change", e => {
   if (e.target.name === "age_band") applyAge();
   if (e.target.name === "q5_ai_used") {
     $("ai-detail").hidden = val("q5_ai_used") !== "있음";
-    if ($("ai-detail").hidden) f.elements.q5_detail.value = "";
+    if ($("ai-detail").hidden) f.querySelectorAll('input[name="q5_result"]').forEach(b => b.checked = false);
   }
   updateProgress();
 });
@@ -375,8 +388,10 @@ f.addEventListener("submit", async e => {
     q2_tasks: { ...answers },
     q6_elder_tasks: isMiddleAge() && elder.length ? elder : null,
     q6_elder_family: isMiddleAge() ? val("q6_elder_family") : null,
-    q2_other: val("q2_other"), q3_ask_others: val("q3_ask_others"), q4_scary: val("q4_scary"),
-    q5_ai_used: val("q5_ai_used"), q5_detail: val("q5_ai_used") === "있음" ? val("q5_detail") : null,
+    q2_other: val("q2_other"),
+    q4_scary_choices: checkedValues("scary-choices").length ? checkedValues("scary-choices") : null,
+    q4_scary: checkedValues("scary-choices").includes(SCARY_OTHER) ? val("q4_scary") : null,
+    q5_ai_used: val("q5_ai_used"), q5_result: val("q5_ai_used") === "있음" ? val("q5_result") : null,
   };
 
   const btn = f.querySelector(".submit");
