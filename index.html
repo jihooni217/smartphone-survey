@@ -98,7 +98,8 @@
 
   #thanks { display:none; padding:80px 20px; }
   #thanks h2 { font-size:30px; margin:0 0 12px; }
-  #thanks p { color:var(--sub); margin:0; }
+  #thanks .thanks-main { font-size:22px; font-weight:600; line-height:1.5; margin:0; }
+  #thanks .thanks-close { color:var(--sub); font-size:18px; margin:24px 0 0; }
 
   footer { padding:0 20px 40px; color:var(--sub); font-size:16px; }
 </style>
@@ -213,8 +214,9 @@
 </form>
 
 <div id="thanks" role="status">
-  <h2>고맙습니다</h2>
-  <p>답해 주신 내용은 잘 받았어요.<br>이제 창을 닫으셔도 돼요.</p>
+  <h2>고맙습니다.</h2>
+  <p class="thanks-main">알려 주신 이야기로 더 쉬운 안내를 만들어 볼게요.</p>
+  <p class="thanks-close">이 창은 닫으셔도 돼요.</p>
 </div>
 </main>
 
