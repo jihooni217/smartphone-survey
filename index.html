@@ -3,118 +3,187 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#2f6fd6">
 <title>스마트폰 사용 경험 설문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#fff; --fg:#1a1a1a; --muted:#555; --line:#d0d7de; --accent:#1f6feb; --soft:#eaf2ff; --ok:#1a7f37; --err:#cf222e; }
+  :root {
+    --bg:#f3f5f9; --card:#ffffff; --fg:#1d2433; --muted:#5b6475; --line:#dfe3ea;
+    --accent:#2f6fd6; --accent-ink:#ffffff; --accent-soft:#e8f0fd; --warm:#fff6e8; --warm-line:#f3d9a8;
+    --err:#c62828; --shadow:0 1px 2px rgba(20,30,50,.06), 0 4px 16px rgba(20,30,50,.06);
+  }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#111; --fg:#eee; --muted:#bbb; --line:#3a3f45; --accent:#4c8dff; --soft:#16233a; --ok:#3fb950; --err:#ff6b6b; }
+    :root {
+      --bg:#0f1218; --card:#181d26; --fg:#e8ecf3; --muted:#a3acbb; --line:#2c3442;
+      --accent:#5b93f0; --accent-ink:#0f1218; --accent-soft:#1c2a42; --warm:#2a2318; --warm-line:#5a4826;
+      --err:#ff7b7b; --shadow:none;
+    }
   }
   * { box-sizing:border-box; }
-  body { margin:0; padding:16px; background:var(--bg); color:var(--fg); font:18px/1.6 system-ui, sans-serif; }
-  main { max-width:640px; margin:0 auto; }
-  h1 { font-size:1.5rem; margin:8px 0 16px; }
-  section { border:1px solid var(--line); border-radius:12px; margin:0 0 20px; padding:16px; }
-  h2 { font-size:1.15rem; margin:0 0 12px; }
-  .hint { color:var(--muted); font-size:.95rem; margin:4px 0 8px; }
-  .intro { background:var(--soft); border-radius:8px; padding:4px 16px; }
-  .intro ul { padding-left:22px; margin:8px 0; }
-  .field { margin:0 0 16px; }
-  .field > .label { font-weight:600; margin-bottom:6px; }
-  /* 큰 버튼 모양 선택지 */
+  html { -webkit-text-size-adjust:100%; }
+  body { margin:0; background:var(--bg); color:var(--fg);
+         font:18px/1.65 "Noto Sans KR", system-ui, -apple-system, sans-serif; word-break:keep-all; }
+  main { max-width:620px; margin:0 auto; padding:0 16px 48px; }
+
+  /* 진행 막대 */
+  .progress { position:sticky; top:0; z-index:10; background:var(--bg); padding:10px 0 8px; }
+  .progress-track { height:8px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .progress-bar { height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .3s; }
+  .progress-text { font-size:.85rem; color:var(--muted); margin-top:4px; text-align:right; }
+
+  /* 머리말 */
+  header { padding:20px 4px 8px; }
+  .badge { display:inline-block; font-size:.8rem; font-weight:500; color:var(--accent);
+           background:var(--accent-soft); padding:4px 12px; border-radius:99px; }
+  h1 { font-size:1.65rem; line-height:1.35; margin:12px 0 4px; }
+  .sub { color:var(--muted); margin:0; }
+
+  /* 카드 */
+  .card { background:var(--card); border:1px solid var(--line); border-radius:18px;
+          box-shadow:var(--shadow); padding:20px; margin:16px 0; }
+  .q-head { display:flex; gap:12px; align-items:flex-start; margin-bottom:12px; }
+  .num { flex:none; width:34px; height:34px; border-radius:50%; background:var(--accent); color:var(--accent-ink);
+         font-weight:700; font-size:1rem; display:grid; place-items:center; margin-top:2px; }
+  .num.small { font-size:.8rem; }
+  h2 { font-size:1.15rem; line-height:1.45; margin:0; }
+  .hint { color:var(--muted); font-size:.95rem; margin:4px 0 0; }
+  .sub-label { font-weight:700; margin:16px 0 8px; }
+  .sub-label:first-of-type { margin-top:4px; }
+
+  /* 안내 */
+  .intro p { margin:0 0 12px; }
+  .facts { list-style:none; padding:0; margin:16px 0 0; display:grid; gap:8px; }
+  .facts li { display:flex; gap:10px; align-items:flex-start; font-size:.98rem; }
+  .facts svg { flex:none; margin-top:4px; color:var(--accent); }
+  .consent { display:flex; gap:12px; align-items:center; margin-top:16px; padding:14px 16px;
+             border:2px solid var(--warm-line); background:var(--warm); border-radius:14px; font-weight:700; cursor:pointer; }
+  .consent input { width:26px; height:26px; flex:none; accent-color:var(--accent); }
+  .note { font-size:.9rem; color:var(--muted); margin:12px 0 0; }
+
+  /* 선택 버튼 */
   .choices { display:flex; flex-wrap:wrap; gap:8px; }
-  .choices label { position:relative; }
-  .choices input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
-  .choices span { display:inline-block; min-height:48px; padding:10px 16px; border:2px solid var(--line); border-radius:10px; }
-  .choices input:checked + span { border-color:var(--accent); background:var(--soft); font-weight:600; }
-  .choices input:focus-visible + span { outline:3px solid var(--accent); outline-offset:2px; }
-  .task { padding:12px 0; border-top:1px solid var(--line); }
-  .task:first-of-type { border-top:0; padding-top:0; }
-  .task .label { font-weight:600; margin-bottom:8px; }
-  textarea { width:100%; min-height:96px; padding:10px; font:inherit; border:2px solid var(--line); border-radius:10px; background:var(--bg); color:var(--fg); }
-  .consent { display:flex; gap:10px; align-items:flex-start; font-weight:600; }
-  .consent input { width:24px; height:24px; margin-top:4px; flex:none; }
-  button { width:100%; min-height:56px; font:inherit; font-weight:700; border:0; border-radius:12px; background:var(--accent); color:#fff; cursor:pointer; }
-  button:disabled { opacity:.5; }
-  #msg { margin-top:12px; font-weight:600; }
-  .err { color:var(--err); }
-  #thanks { display:none; text-align:center; padding:48px 16px; }
-  #thanks h2 { font-size:1.4rem; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .choice { position:relative; display:block; }
+  .choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+  .choice span { display:flex; align-items:center; justify-content:center; text-align:center;
+                 min-height:52px; padding:8px 16px; border:2px solid var(--line); border-radius:14px;
+                 background:var(--card); font-weight:500; transition:background .15s, border-color .15s; }
+  .grid2 .choice span { padding:8px 10px; font-size:.95rem; line-height:1.35; }
+  .choice input:checked + span { border-color:var(--accent); background:var(--accent-soft); color:var(--fg); font-weight:700; }
+  .choice input:focus-visible + span { outline:3px solid var(--accent); outline-offset:2px; }
+
+  /* 3번 과업 */
+  .task { padding:16px 0; border-top:1px solid var(--line); }
+  .task:first-child { border-top:0; padding-top:4px; }
+  .task-name { font-weight:700; margin-bottom:8px; }
+
+  textarea { width:100%; min-height:110px; padding:12px 14px; font:inherit; color:var(--fg);
+             background:var(--card); border:2px solid var(--line); border-radius:14px; resize:vertical; }
+  textarea:focus { outline:none; border-color:var(--accent); }
+
+  .optional { display:inline-block; font-size:.75rem; font-weight:500; color:var(--muted);
+              border:1px solid var(--line); border-radius:99px; padding:0 8px; margin-left:6px; vertical-align:middle; }
+
+  /* 제출 */
+  .submit { width:100%; min-height:60px; margin-top:8px; font:inherit; font-size:1.1rem; font-weight:700;
+            border:0; border-radius:16px; background:var(--accent); color:var(--accent-ink); cursor:pointer; box-shadow:var(--shadow); }
+  .submit:disabled { opacity:.55; cursor:default; }
+  #msg { margin-top:12px; font-weight:700; color:var(--err); text-align:center; }
+
+  /* 감사 화면 */
+  #thanks { display:none; text-align:center; padding:56px 20px; }
+  #thanks .check { width:72px; height:72px; margin:0 auto 16px; border-radius:50%; background:var(--accent-soft);
+                   color:var(--accent); display:grid; place-items:center; }
+  #thanks h2 { font-size:1.45rem; margin-bottom:8px; }
+  #thanks p { color:var(--muted); margin:0; }
+
+  footer { text-align:center; color:var(--muted); font-size:.8rem; margin-top:24px; }
 </style>
 </head>
 <body>
 <main>
-<h1>스마트폰 사용 경험 설문</h1>
+<div class="progress" aria-hidden="true">
+  <div class="progress-track"><div class="progress-bar" id="bar"></div></div>
+  <div class="progress-text" id="bar-text">0 / 6</div>
+</div>
 
 <form id="f" novalidate>
-  <section>
-    <div class="intro">
-      <p>안녕하세요. 대구대학교 컴퓨터소프트웨어 전공 학생들입니다.</p>
-      <p>저희는 누구나 스마트폰을 더 쉽고 안전하게 쓸 수 있도록 돕는 방법을 찾는 프로젝트를 진행하고 있습니다.
-        평소 스마트폰을 쓰시면서 <strong>편했던 점과 막혔던 점</strong>을 들려주시면,
-        실제로 필요한 도움이 무엇인지 정하는 데 큰 힘이 됩니다.</p>
-      <ul>
-        <li>5분 정도 걸립니다.</li>
-        <li>이름이나 연락처는 묻지 않습니다.</li>
-        <li>답하기 어려운 질문은 넘어가셔도 괜찮습니다.</li>
-        <li>응답은 이름 없이 정리되어 이 프로젝트의 분석 자료로 보관되며, 결과 보고서에 통계 형태로 실릴 수 있습니다.</li>
-      </ul>
-      <p>시간 내 주셔서 감사합니다.</p>
-    </div>
-    <p class="hint">글로 적는 칸에는 이름·연락처·주소를 적지 말아 주세요.</p>
+  <header>
+    <span class="badge">대구대학교 DAP 프로젝트</span>
+    <h1>스마트폰 사용 경험 설문</h1>
+    <p class="sub">약 5분 · 이름을 묻지 않아요</p>
+  </header>
+
+  <section class="card intro">
+    <p>안녕하세요. 대구대학교 컴퓨터소프트웨어 전공 학생들입니다.</p>
+    <p>저희는 누구나 스마트폰을 더 쉽고 안전하게 쓸 수 있도록 돕는 방법을 찾는 프로젝트를 진행하고 있습니다.
+      평소 스마트폰을 쓰시면서 <strong>편했던 점과 막혔던 점</strong>을 들려주시면,
+      실제로 필요한 도움이 무엇인지 정하는 데 큰 힘이 됩니다.</p>
+    <ul class="facts">
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>이름이나 연락처는 묻지 않습니다.</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>답하기 어려운 질문은 넘어가셔도 괜찮습니다.</li>
+      <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>응답은 이름 없이 정리되어 이 프로젝트의 분석 자료로 보관되며, 결과 보고서에 통계 형태로 실릴 수 있습니다.</li>
+    </ul>
     <label class="consent"><input type="checkbox" name="consent"> 위 내용을 읽었고 응답에 동의합니다</label>
+    <p class="note">글로 적는 칸에는 이름·연락처·주소를 적지 말아 주세요.</p>
   </section>
 
-  <section>
-    <h2>1. 기본 정보</h2>
-    <div class="field"><div class="label">연령대</div><div class="choices" data-radio="age_band"></div></div>
-    <div class="field"><div class="label">쓰시는 휴대폰</div><div class="choices" data-radio="device"></div></div>
-    <div class="field"><div class="label">스마트폰을 쓰신 지</div><div class="choices" data-radio="usage_years"></div></div>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">1</span><h2>기본 정보</h2></div>
+    <div class="sub-label">연령대</div><div class="choices" data-radio="age_band"></div>
+    <div class="sub-label">쓰시는 휴대폰</div><div class="choices" data-radio="device"></div>
+    <div class="sub-label">스마트폰을 쓰신 지</div><div class="choices" data-radio="usage_years"></div>
   </section>
 
-  <section>
-    <h2>2. 스마트폰으로 주로 무엇을 하시나요?</h2>
-    <p class="hint">예: 카톡, 유튜브, 사진 찍기, 뉴스 보기</p>
-    <textarea name="q1_frequent" maxlength="1000"></textarea>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">2</span><div><h2>스마트폰으로 주로 무엇을 하시나요?</h2>
+      <p class="hint">예: 카톡, 유튜브, 사진 찍기, 뉴스 보기</p></div></div>
+    <textarea name="q1_frequent" maxlength="1000" aria-label="스마트폰으로 주로 하는 것"></textarea>
   </section>
 
-  <section>
-    <h2>3. 아래 일들을 해 보신 적이 있나요?</h2>
-    <p class="hint">하나씩 가장 가까운 것을 골라 주세요.</p>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">3</span><div><h2>아래 일들을 해 보신 적이 있나요?</h2>
+      <p class="hint">하나씩 가장 가까운 것을 골라 주세요.</p></div></div>
     <div id="q2"></div>
   </section>
 
-  <section>
-    <h2>4. 어려워서 가족이나 다른 사람에게 부탁하시는 일이 있나요?</h2>
-    <p class="hint">최근에 부탁하신 일이 있으면 함께 적어 주세요.</p>
-    <textarea name="q3_ask_others" maxlength="1000"></textarea>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">4</span><div><h2>어려워서 가족이나 다른 사람에게 부탁하시는 일이 있나요?</h2>
+      <p class="hint">최근에 부탁하신 일이 있으면 함께 적어 주세요.</p></div></div>
+    <textarea name="q3_ask_others" maxlength="1000" aria-label="다른 사람에게 부탁하는 일"></textarea>
   </section>
 
-  <section id="elder" hidden>
-    <h2>4-1. 부모님 등 60대 이상 가족분이 스마트폰 때문에 도움을 청하시는 일이 있나요?</h2>
-    <p class="hint">40·50대이신 분께만 여쭙습니다. 어떤 일을 자주 물어보시는지, 어디서 막히시는지 적어 주세요.</p>
-    <textarea name="q6_elder_family" maxlength="1000"></textarea>
+  <section class="card" id="elder" hidden>
+    <div class="q-head"><span class="num small">4-1</span><div>
+      <h2>부모님 등 60대 이상 가족분이 스마트폰 때문에 도움을 청하시는 일이 있나요?</h2>
+      <p class="hint">40·50대이신 분께만 여쭙습니다. 어떤 일을 자주 물어보시는지, 어디서 막히시는지 적어 주세요.</p></div></div>
+    <textarea name="q6_elder_family" maxlength="1000" aria-label="60대 이상 가족이 도움을 청하는 일"></textarea>
   </section>
 
-  <section>
-    <h2>5. 잘못 누를까 봐 걱정됐던 화면이 있나요?</h2>
-    <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
-    <textarea name="q4_scary" maxlength="1000"></textarea>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">5</span><div><h2>잘못 누를까 봐 걱정됐던 화면이 있나요?</h2>
+      <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p></div></div>
+    <textarea name="q4_scary" maxlength="1000" aria-label="걱정됐던 화면"></textarea>
   </section>
 
-  <section>
-    <h2>6. AI(제미나이, ChatGPT, 빅스비 등)에게 무언가를 물어보신 적이 있나요?</h2>
-    <div class="field"><div class="choices" data-radio="q5_ai_used"></div></div>
-    <p class="hint"><strong>있으시면:</strong> 무엇을 물어보셨고, 알려 준 대로 하니 되셨나요?<br>
-      <strong>없으시면:</strong> 휴대폰 화면을 보여 주면 무엇을 누를지 알려 주는 AI가 있다면 써 보시겠어요? 그 이유도 적어 주세요.</p>
-    <textarea name="q5_detail" maxlength="1000"></textarea>
+  <section class="card" data-step>
+    <div class="q-head"><span class="num">6</span><h2>AI(제미나이, ChatGPT, 빅스비 등)에게 무언가를 물어보신 적이 있나요?</h2></div>
+    <div class="choices" data-radio="q5_ai_used"></div>
+    <p class="hint" style="margin-top:14px"><strong>있으시면</strong> 무엇을 물어보셨고, 알려 준 대로 하니 되셨나요?<br>
+      <strong>없으시면</strong> 휴대폰 화면을 보여 주면 무엇을 누를지 알려 주는 AI가 있다면 써 보시겠어요? 그 이유도 적어 주세요.</p>
+    <textarea name="q5_detail" maxlength="1000" style="margin-top:10px" aria-label="AI 사용 경험"></textarea>
   </section>
 
-  <button type="submit">제출하기</button>
+  <button type="submit" class="submit">제출하기</button>
   <div id="msg" role="status"></div>
+  <footer>대구대학교 2026-2 문제해결형 답(DAP) · 팀 거제야허</footer>
 </form>
 
 <div id="thanks" role="status">
-  <h2>응답해 주셔서 감사합니다.</h2>
+  <div class="check"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+  <h2>응답해 주셔서 감사합니다</h2>
   <p>소중한 의견은 프로젝트에 잘 반영하겠습니다.<br>이제 이 창을 닫으셔도 됩니다.</p>
 </div>
 </main>
@@ -136,19 +205,19 @@ const TASKS = ["카톡으로 사진 보내기", "카톡 음성메시지 보내�
   "와이파이 연결하기", "기차·버스 표 예매", "병원 예약·조회", "정부24 등 증명서 발급",
   "은행 앱 잔액 조회", "은행 앱 송금"];
 // 저장 값은 그대로 두고 화면 문구만 바꾼다 (분석할 때 값이 섞이지 않게)
-const LEVELS = [["혼자 할 수 있음", "혼자 할 수 있음"], ["도움 받으면 함", "도움을 받으면 할 수 있음"],
-  ["해 봤는데 포기", "해 봤는데 포기함"], ["안 해 봄", "안 해 봄"]];
+const LEVELS = [["혼자 할 수 있음", "혼자 할 수 있어요"], ["도움 받으면 함", "도움 받으면 해요"],
+  ["해 봤는데 포기", "해 봤는데 포기했어요"], ["안 해 봄", "안 해 봤어요"]];
 
 const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const choice = (name, value, text) =>
-  `<label><input type="radio" name="${name}" value="${esc(value)}"><span>${esc(text)}</span></label>`;
+  `<label class="choice"><input type="radio" name="${name}" value="${esc(value)}"><span>${esc(text)}</span></label>`;
 
 for (const [name, opts] of Object.entries(RADIOS)) {
   document.querySelector(`[data-radio="${name}"]`).innerHTML = opts.map(o => choice(name, o, o)).join("");
 }
 document.getElementById("q2").innerHTML = TASKS.map((t, i) =>
-  `<div class="task" role="radiogroup" aria-label="${esc(t)}"><div class="label">${esc(t)}</div>
-   <div class="choices">${LEVELS.map(([v, txt]) => choice(`q2_${i}`, v, txt)).join("")}</div></div>`).join("");
+  `<div class="task" role="radiogroup" aria-label="${esc(t)}"><div class="task-name">${esc(t)}</div>
+   <div class="grid2">${LEVELS.map(([v, txt]) => choice(`q2_${i}`, v, txt)).join("")}</div></div>`).join("");
 
 const f = document.getElementById("f"), msg = document.getElementById("msg");
 const val = n => { const e = f.elements[n]; return (e && e.value || "").trim() || null; };
@@ -156,17 +225,29 @@ const val = n => { const e = f.elements[n]; return (e && e.value || "").trim() |
 // 4-1 은 40·50대를 골랐을 때만 보인다. 다른 연령대로 바꾸면 적은 내용도 지운다.
 const elder = document.getElementById("elder");
 const isMiddleAge = () => ["40대", "50대"].includes(val("age_band"));
+
+// 진행 막대: 한 칸이라도 답한 문항 수
+const steps = [...document.querySelectorAll("[data-step]")];
+const answered = s => [...s.querySelectorAll("input:checked, textarea")].some(e => e.type !== "textarea" ? true : e.value.trim());
+function updateProgress() {
+  const n = steps.filter(answered).length;
+  document.getElementById("bar").style.width = `${(n / steps.length) * 100}%`;
+  document.getElementById("bar-text").textContent = `${n} / ${steps.length}`;
+}
 f.addEventListener("change", e => {
-  if (e.target.name !== "age_band") return;
-  elder.hidden = !isMiddleAge();
-  if (elder.hidden) f.elements.q6_elder_family.value = "";
+  if (e.target.name === "age_band") {
+    elder.hidden = !isMiddleAge();
+    if (elder.hidden) f.elements.q6_elder_family.value = "";
+  }
+  updateProgress();
 });
+f.addEventListener("input", updateProgress);
 
 f.addEventListener("submit", async e => {
   e.preventDefault();
   if (!f.elements.consent.checked) {
     show("맨 위의 '응답에 동의합니다'에 체크해 주세요.");
-    f.elements.consent.focus();
+    f.elements.consent.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
   const tasks = {};
@@ -179,7 +260,8 @@ f.addEventListener("submit", async e => {
     q5_ai_used: val("q5_ai_used"), q5_detail: val("q5_detail"),
   };
   if (isMiddleAge() && val("q6_elder_family")) row.q6_elder_family = val("q6_elder_family");
-  const btn = f.querySelector("button");
+
+  const btn = f.querySelector(".submit");
   btn.disabled = true; btn.textContent = "제출하는 중…"; show("");
   try {
     const r = await fetch(`${SUPABASE_URL}/rest/v1/survey_responses`, {
@@ -191,6 +273,7 @@ f.addEventListener("submit", async e => {
     if (!r.ok) throw new Error(`${r.status} ${await r.text()}`);
     // 같은 응답이 두 번 저장되지 않게 설문 화면을 닫는다
     f.style.display = "none";
+    document.querySelector(".progress").style.display = "none";
     document.getElementById("thanks").style.display = "block";
     window.scrollTo(0, 0);
   } catch (err) {
@@ -199,7 +282,7 @@ f.addEventListener("submit", async e => {
     btn.disabled = false; btn.textContent = "제출하기";
   }
 });
-function show(t) { msg.textContent = t; msg.className = t ? "err" : ""; }
+function show(t) { msg.textContent = t; }
 </script>
 </body>
 </html>
