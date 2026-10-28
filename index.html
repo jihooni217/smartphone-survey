@@ -133,7 +133,6 @@
     <div class="sub-label">나이대</div><div class="choices" data-radio="age_band"></div>
     <div class="sub-label">쓰시는 휴대폰</div><div class="stack" data-radio="device"></div>
     <div class="sub-label">스마트폰을 쓰신 지</div><div class="stack" data-radio="usage_years"></div>
-    <div class="sub-label">이 설문은 누가 누르고 있나요?</div><div class="stack" data-radio="filled_by"></div>
   </section>
 
   <!-- 2. 나이대를 고르기 전 / 60대 이상 / 40·50대 에 따라 셋 중 하나만 보인다 -->
@@ -199,6 +198,13 @@
     </div>
   </section>
 
+  <!-- 대신 입력한 응답을 분석 때 구분하려고 묻는다. 기본 정보에 두면 어색해서 마지막에 둔다. -->
+  <section class="block">
+    <div class="q-num">마지막으로</div>
+    <h2>설문은 직접 하셨나요, 누가 도와드렸나요?</h2>
+    <div class="stack" data-radio="filled_by" style="margin-top:20px"></div>
+  </section>
+
   <div class="submit-row">
     <button type="submit" class="submit">다 했어요, 제출하기</button>
     <div id="msg" role="status"></div>
@@ -224,7 +230,7 @@ const RADIOS = {
   age_band: [["40대", "40대"], ["50대", "50대"], ["60대", "60대"], ["70대", "70대"], ["80대 이상", "80대 이상"]],
   device: [["갤럭시(안드로이드)", "갤럭시(안드로이드)"], ["아이폰", "아이폰"], ["잘 모르겠어요", "모름"]],
   usage_years: [["1년이 안 됐어요", "1년 미만"], ["1~5년", "1~5년"], ["5년이 넘었어요", "5년 이상"]],
-  filled_by: [["제가 직접 누르고 있어요", "직접"], ["옆에서 누가 도와주고 있어요", "도움"], ["다른 사람이 대신 입력하고 있어요", "대신"]],
+  filled_by: [["제가 직접 했어요", "직접"], ["가족이 옆에서 도와줬어요", "도움"], ["가족이 대신 입력했어요", "대신"]],
   q5_ai_used: [["있어요", "있음"], ["없어요", "없음"]],
 };
 // 과업 14개 (저장 키 = 과업 이름). 분석할 때 이 이름을 그대로 쓴다.
