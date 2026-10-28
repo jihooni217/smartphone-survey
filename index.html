@@ -3,116 +3,117 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#fbf7ef">
+<meta name="theme-color" content="#ffffff">
 <title>스마트폰 사용 경험 설문</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
   /*
-    방향: 따뜻한 생활 잡지. 크림 바탕, 짙은 초록 하나, 둥근 제목 글꼴.
-    글꼴: 고운돋움 = 큰 제목·문항 제목·과업 이름 / IBM Plex Sans KR = 본문·버튼
-    간격: 8px 단위 (8·16·24·32·48·64)   글자: 15·18·22·26·34
-    중심 장면: 연초록 판 위의 큰 과업 이름 하나
+    방향: 큰 글씨 생활 안내 (은행 앱 고령자 모드처럼)
+    근거 (docs/설문_디자인_근거.md):
+    - 나이가 들면 파랑·초록 구별이 어려움 → 강조는 따뜻한 노랑, 구분은 밝기 대비로
+    - 색만으로 의미 전달 금지 → 고른 칸에 ✓ 표시
+    - 누를 때마다 분명한 반응, 되돌아갈 길 → 자동 넘김 없음, "다음"·"이전" 버튼
+    - 이동 버튼은 내용 바로 아래 (고령자 설문 실험에서 가장 선호)
+    글꼴: Pretendard 한 가지 (굵기로 역할 구분)   간격: 4px 단위 (8·12·16·20·24·32·40)
+    글자: 18 보조 · 20 본문 · 24 질문 · 32 과업 이름 · 30 제목
   */
   :root {
-    --bg:#fbf7ef; --ink:#23261f; --muted:#5f5a52; --line:#e6dfd1; --field:#ffffff;
-    --green:#1f5a43; --green-soft:#e3efe7; --on-green:#ffffff;
-    --head:"Gowun Dodum", sans-serif;
-    --body:"IBM Plex Sans KR", system-ui, -apple-system, sans-serif;
+    --bg:#ffffff; --band:#f2f2f0; --ink:#111111; --sub:#444444; --line:#8a8a8a;
+    --pick:#ffd84d; --pick-ink:#111111; --btn:#111111; --btn-ink:#ffffff;
+    --font:"Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --bg:#141a16; --ink:#ecefe8; --muted:#b4b8ae; --line:#2c352f; --field:#1b231e;
-            --green:#7fcfa6; --green-soft:#1f3329; --on-green:#0f1612; }
+    :root { --bg:#121212; --band:#000000; --ink:#f4f4f4; --sub:#c8c8c8; --line:#8a8a8a;
+            --pick:#ffd84d; --pick-ink:#111111; --btn:#ffd84d; --btn-ink:#111111; }
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.7 var(--body); word-break:keep-all; }
-  main { max-width:600px; margin:0 auto; padding:0 20px 64px; }
+  body { margin:0; background:var(--band); color:var(--ink); font:20px/1.6 var(--font); word-break:keep-all; }
+  main { max-width:560px; margin:0 auto; background:var(--bg); min-height:100vh; }
   [hidden] { display:none !important; }
 
-  .progress { position:sticky; top:0; z-index:10; background:var(--bg); padding:12px 0 8px; display:flex; align-items:center; gap:16px; }
-  .progress-track { flex:1; height:6px; border-radius:99px; background:var(--line); overflow:hidden; }
-  .progress-bar { height:100%; width:0; border-radius:99px; background:var(--green); transition:width .3s; }
-  .progress-text { font-size:15px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  /* 진행: 글로 먼저, 막대는 보조 */
+  .progress { position:sticky; top:0; z-index:10; background:var(--bg); padding:12px 20px; border-bottom:1px solid var(--band); }
+  .progress-text { font-size:18px; font-weight:600; }
+  .progress-track { height:8px; margin-top:6px; border-radius:4px; background:var(--band); overflow:hidden; }
+  .progress-bar { height:100%; width:0; background:var(--ink); transition:width .3s; }
 
-  header { padding:40px 0 24px; }
-  .org { font-size:15px; color:var(--muted); margin:0 0 16px; }
-  h1 { font-family:var(--head); font-weight:400; font-size:34px; line-height:1.35; margin:0; color:var(--green); }
-  h1 .sub { display:block; font-size:22px; color:var(--ink); margin-top:8px; }
+  /* 문항마다 하나의 덩어리, 사이는 회색 띠 */
+  .block { padding:32px 20px; border-bottom:12px solid var(--band); }
+  header.block { padding-top:24px; }
+  .org { font-size:18px; color:var(--sub); margin:0 0 8px; }
+  h1 { font-size:30px; line-height:1.35; font-weight:800; margin:0; }
+  .intro p { margin:16px 0 0; }
+  .facts { margin:16px 0 0; padding-left:24px; color:var(--sub); font-size:18px; }
+  .facts li { margin:6px 0; }
+  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px; border:3px solid var(--ink);
+             border-radius:12px; font-weight:700; cursor:pointer; }
+  .consent input { width:32px; height:32px; flex:none; accent-color:#111; }
+  .note { font-size:18px; color:var(--sub); margin:12px 0 0; }
+  .note strong { color:var(--ink); }
 
-  .intro p { margin:0 0 16px; }
-  .facts { margin:0; padding-left:20px; color:var(--muted); font-size:16px; }
-  .facts li { margin:4px 0; }
-  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px 20px; border-radius:16px;
-             background:var(--green-soft); font-weight:700; cursor:pointer; }
-  .consent input { width:26px; height:26px; flex:none; accent-color:var(--green); }
-  .note { font-size:15px; color:var(--muted); margin:8px 0 0; }
-  .em { color:var(--green); font-weight:700; }
+  .q-num { font-size:18px; font-weight:700; color:var(--sub); margin-bottom:8px; }
+  h2 { font-size:24px; line-height:1.45; font-weight:800; margin:0; }
+  .hint { color:var(--sub); font-size:18px; margin:8px 0 0; }
+  .em { font-weight:800; background:var(--pick); color:var(--pick-ink); padding:0 4px; }
+  .sub-label { font-weight:700; margin:28px 0 12px; }
 
-  /* 문항: 상자 없이 여백으로 나눈다 */
-  .q { padding:48px 0 0; }
-  .q-num { font-size:15px; font-weight:700; color:var(--green); letter-spacing:.04em; margin-bottom:8px; }
-  .q-body { min-width:0; }
-  h2 { font-family:var(--head); font-weight:400; font-size:26px; line-height:1.4; margin:0; }
-  .hint { color:var(--muted); font-size:16px; margin:8px 0 0; }
-  .sub-label { font-weight:700; font-size:16px; margin:24px 0 8px; }
-
-  /* 선택지: 알약 모양 */
-  .choices { display:flex; flex-wrap:wrap; gap:8px; }
-  .stack { display:grid; gap:8px; }
+  /* 선택지: 크게, 간격 넉넉히, 고르면 노랑 + ✓ */
+  .choices, .stack { display:grid; gap:12px; }
+  .choices { grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); }
   .choice { position:relative; display:block; }
   .choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
-  .choice span { display:flex; align-items:center; min-height:52px; padding:8px 24px; border-radius:99px;
-                 border:2px solid var(--line); background:var(--field); font-weight:500; }
-  .choices .choice span { justify-content:center; padding:8px 20px; }
-  .choice input:checked + span { background:var(--green); border-color:var(--green); color:var(--on-green); font-weight:700; }
-  .choice input:focus-visible + span { outline:3px solid var(--green); outline-offset:3px; }
+  .choice span { display:flex; align-items:center; gap:12px; min-height:60px; padding:12px 16px;
+                 border:2px solid var(--line); border-radius:12px; background:var(--bg); font-weight:600; }
+  .choice span::before { content:""; flex:none; width:28px; height:28px; border:2px solid var(--line); border-radius:50%; }
+  .choice input[type=checkbox] + span::before { border-radius:6px; }
+  .choice input:checked + span { background:var(--pick); color:var(--pick-ink); border:3px solid var(--ink); font-weight:800; }
+  .choice input:checked + span::before { content:"✓"; display:grid; place-items:center; background:var(--ink); color:var(--pick);
+                                         border-color:var(--ink); font-size:20px; font-weight:900; }
+  .choice input:focus-visible + span { outline:4px solid var(--ink); outline-offset:3px; }
 
-  /* 과업: 연초록 판 위에 이름 하나를 크게 */
-  .task-panel { margin-top:24px; padding:24px 24px 32px; border-radius:24px; background:var(--green-soft); }
-  .deck-meta { display:flex; justify-content:space-between; align-items:baseline; font-size:15px; color:var(--muted); }
-  .deck-count { font-weight:700; color:var(--green); font-variant-numeric:tabular-nums; }
-  .task-name { font-family:var(--head); font-size:34px; line-height:1.3; color:var(--green); margin:8px 0 0; }
-  .deck-choices-wrap { margin-top:16px; }
-  .deck-nav { display:flex; justify-content:space-between; gap:8px; margin-top:16px; }
-  .ghost { min-height:48px; padding:8px 0; font:inherit; font-size:16px; color:var(--muted); background:none; border:0; cursor:pointer; }
-  .ghost:disabled { visibility:hidden; }
-  .deck-done { margin-top:24px; padding:24px; border-radius:24px; background:var(--green-soft); }
-  .deck-done p { margin:0; font-weight:700; color:var(--green); }
+  /* 과업: 한 번에 하나, 이름은 크게, 이동 버튼은 바로 아래 */
+  .deck-meta { display:flex; justify-content:space-between; align-items:baseline; margin-top:24px; font-size:18px; color:var(--sub); }
+  .deck-count { font-weight:800; color:var(--ink); font-variant-numeric:tabular-nums; }
+  .task-name { font-size:32px; line-height:1.3; font-weight:800; margin:8px 0 20px; }
+  .deck-nav { display:grid; grid-template-columns:1fr 2fr; gap:12px; margin-top:20px; }
+  .btn { min-height:60px; font:inherit; font-weight:800; border-radius:12px; cursor:pointer; }
+  .btn-main { border:0; background:var(--btn); color:var(--btn-ink); }
+  .btn-sub { border:2px solid var(--line); background:var(--bg); color:var(--ink); }
+  .btn-sub:disabled { visibility:hidden; }
+  .deck-done { margin-top:24px; padding:20px; border-radius:12px; background:var(--band); }
+  .deck-done p { margin:0 0 12px; font-weight:700; }
+  .gate { margin:12px 0 0; padding:16px; border-radius:12px; background:var(--band); color:var(--ink); }
 
-  textarea { width:100%; min-height:112px; margin-top:16px; padding:16px 20px; font:inherit; color:var(--ink);
-             background:var(--field); border:2px solid var(--line); border-radius:16px; resize:vertical; }
-  textarea:focus { outline:none; border-color:var(--green); }
+  textarea { width:100%; min-height:120px; margin-top:16px; padding:16px; font:inherit; color:var(--ink);
+             background:var(--bg); border:2px solid var(--line); border-radius:12px; resize:vertical; }
+  textarea:focus { outline:none; border:3px solid var(--ink); }
 
-  .submit-row { margin-top:64px; }
-  .submit { width:100%; min-height:64px; font:inherit; font-size:20px; font-weight:700;
-            border:0; border-radius:99px; background:var(--green); color:var(--on-green); cursor:pointer; }
-  .submit:disabled { opacity:.55; cursor:default; }
-  #msg { margin-top:16px; font-weight:700; color:#b3261e; }
-  @media (prefers-color-scheme: dark) { #msg { color:#ffb4a9; } }
+  .submit-row { padding:32px 20px 24px; }
+  .submit { width:100%; min-height:68px; font:inherit; font-size:22px; font-weight:800;
+            border:0; border-radius:12px; background:var(--btn); color:var(--btn-ink); cursor:pointer; }
+  .submit:disabled { opacity:.5; cursor:default; }
+  #msg { margin-top:16px; font-weight:800; color:#b00020; }
+  @media (prefers-color-scheme: dark) { #msg { color:#ff8a80; } }
 
-  #thanks { display:none; padding:96px 0 48px; }
-  #thanks h2 { font-size:34px; color:var(--green); margin:0 0 16px; }
-  #thanks p { color:var(--muted); margin:0; }
+  #thanks { display:none; padding:80px 20px; }
+  #thanks h2 { font-size:30px; margin:0 0 12px; }
+  #thanks p { color:var(--sub); margin:0; }
 
-  footer { color:var(--muted); font-size:15px; margin-top:48px; }
+  footer { padding:0 20px 40px; color:var(--sub); font-size:16px; }
 </style>
 </head>
 <body>
 <main>
 <div class="progress" aria-hidden="true">
-  <div class="progress-track"><div class="progress-bar" id="bar"></div></div>
   <div class="progress-text" id="bar-text"></div>
+  <div class="progress-track"><div class="progress-bar" id="bar"></div></div>
 </div>
 
 <form id="f" novalidate>
-  <header>
+  <header class="block intro">
     <p class="org">대구대학교 문제해결형 답(DAP) 프로젝트</p>
-    <h1>휴대폰, 어디서 막히세요?<span class="sub">스마트폰 사용 경험 설문</span></h1>
-  </header>
-
-  <section class="intro">
+    <h1>스마트폰 사용 경험 설문</h1>
     <p>안녕하세요. 대구대학교 컴퓨터소프트웨어 전공 학생들이에요.
       휴대폰으로 무엇을 하다가 막히시는지 알아보고 있어요.
       답해 주신 내용으로 저희가 어떤 일부터 다룰지 정해요.</p>
@@ -124,96 +125,82 @@
     </ul>
     <label class="consent"><input type="checkbox" name="consent"> 안내를 확인했으며, 설문 참여와 응답 보관에 동의합니다</label>
     <p class="note">글로 적는 칸에는 <strong>이름·연락처·주소를 적지 말아 주세요.</strong></p>
-  </section>
+  </header>
 
-  <section class="q" data-step="basic">
+  <section class="block" data-step="basic">
     <div class="q-num">질문 1</div>
-    <div class="q-body">
-      <h2>먼저 간단히 여쭤볼게요</h2>
-      <div class="sub-label">나이대</div><div class="choices" data-radio="age_band"></div>
-      <div class="sub-label">쓰시는 휴대폰</div><div class="choices" data-radio="device"></div>
-      <div class="sub-label">스마트폰을 쓰신 지</div><div class="choices" data-radio="usage_years"></div>
-      <div class="sub-label">이 설문은 누가 누르고 있나요?</div><div class="stack" data-radio="filled_by"></div>
-    </div>
+    <h2>먼저 간단히 여쭤볼게요</h2>
+    <div class="sub-label">나이대</div><div class="choices" data-radio="age_band"></div>
+    <div class="sub-label">쓰시는 휴대폰</div><div class="stack" data-radio="device"></div>
+    <div class="sub-label">스마트폰을 쓰신 지</div><div class="stack" data-radio="usage_years"></div>
+    <div class="sub-label">이 설문은 누가 누르고 있나요?</div><div class="stack" data-radio="filled_by"></div>
   </section>
 
   <!-- 2. 나이대를 고르기 전 / 60대 이상 / 40·50대 에 따라 셋 중 하나만 보인다 -->
-  <section class="q" data-step="tasks">
+  <section class="block" data-step="tasks">
     <div class="q-num">질문 2</div>
-    <div class="q-body">
-      <div id="gate-age"><h2>나이대에 맞는 질문이 여기 나와요</h2><p class="hint">질문 1에서 나이대를 먼저 골라 주세요.</p></div>
+    <div id="gate-age"><h2>나이대에 맞는 질문</h2><p class="gate">질문 1에서 나이대를 먼저 골라 주세요. 그러면 여기에 질문이 나와요.</p></div>
 
-      <div id="deck" hidden>
-        <h2>아래 일들은 어떠세요?</h2>
-        <p class="hint">가장 가까운 것 하나를 누르면 다음 일로 넘어가요.</p>
-        <div id="deck-card">
-          <div class="task-panel">
-            <div class="deck-meta"><span id="deck-group"></span><span class="deck-count" id="deck-count"></span></div>
-            <div class="task-name" id="deck-task"></div>
-          </div>
-          <div class="stack deck-choices-wrap" id="deck-choices"></div>
-          <div class="deck-nav">
-            <button type="button" class="ghost" id="deck-prev">← 이전</button>
-            <button type="button" class="ghost" id="deck-skip">잘 모르겠어요, 넘어가기 →</button>
-          </div>
-        </div>
-        <div class="deck-done" id="deck-done" hidden>
-          <p id="deck-done-text"></p>
-          <button type="button" class="ghost" id="deck-review">처음부터 다시 보기</button>
+    <div id="deck" hidden>
+      <h2>아래 일들은 어떠세요?</h2>
+      <p class="hint">가장 가까운 것 하나를 고르고 <strong>다음</strong>을 눌러 주세요.</p>
+      <div id="deck-card">
+        <div class="deck-meta"><span id="deck-group"></span><span class="deck-count" id="deck-count"></span></div>
+        <div class="task-name" id="deck-task"></div>
+        <div class="stack" id="deck-choices"></div>
+        <div class="deck-nav">
+          <button type="button" class="btn btn-sub" id="deck-prev">이전</button>
+          <button type="button" class="btn btn-main" id="deck-skip">다음</button>
         </div>
       </div>
-
-      <div id="elder" hidden>
-        <h2>부모님 등 60대 이상 가족분이 휴대폰 때문에 도와 달라고 하시는 일을 모두 골라 주세요</h2>
-        <p class="hint"><span class="em">40·50대이신 분께만</span> 여쭤봐요. 여러 개 골라도 돼요.</p>
-        <div class="stack" id="elder-choices" style="margin-top:24px"></div>
-        <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요</div>
-        <textarea name="q6_elder_family" maxlength="1000" aria-label="그 밖에 가족이 부탁하는 일" style="margin-top:0"></textarea>
+      <div class="deck-done" id="deck-done" hidden>
+        <p id="deck-done-text"></p>
+        <button type="button" class="btn btn-sub" id="deck-review" style="width:100%">처음부터 다시 보기</button>
       </div>
+    </div>
+
+    <div id="elder" hidden>
+      <h2>부모님 등 60대 이상 가족분이 휴대폰 때문에 도와 달라고 하시는 일을 모두 골라 주세요</h2>
+      <p class="hint"><span class="em">40·50대이신 분께만</span> 여쭤봐요. 여러 개 골라도 돼요.</p>
+      <div class="stack" id="elder-choices" style="margin-top:20px"></div>
+      <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요</div>
+      <textarea name="q6_elder_family" maxlength="1000" aria-label="그 밖에 가족이 부탁하는 일" style="margin-top:0"></textarea>
     </div>
   </section>
 
-  <section class="q" data-step="other">
+  <section class="block" data-step="other">
     <div class="q-num">질문 3</div>
-    <div class="q-body">
-      <h2>위에 없는 일 중에 막혔던 일이 있으면 적어 주세요</h2>
-      <p class="hint">없으시면 넘어가셔도 돼요.</p>
-      <textarea name="q2_other" maxlength="1000" aria-label="목록에 없는 막힌 일"></textarea>
-    </div>
+    <h2>위에 없는 일 중에 막혔던 일이 있으면 적어 주세요</h2>
+    <p class="hint">없으시면 넘어가셔도 돼요.</p>
+    <textarea name="q2_other" maxlength="1000" aria-label="목록에 없는 막힌 일"></textarea>
   </section>
 
-  <section class="q" data-step="recent">
+  <section class="block" data-step="recent">
     <div class="q-num">질문 4</div>
-    <div class="q-body">
-      <h2>최근에 휴대폰으로 하다가 다른 사람한테 부탁한 일, 가장 최근 한 번만 적어 주세요</h2>
-      <p class="hint">예: 카톡에서 사진 여러 장 보내기</p>
-      <textarea name="q3_ask_others" maxlength="1000" aria-label="가장 최근에 부탁한 일"></textarea>
-    </div>
+    <h2>최근에 휴대폰으로 하다가 다른 사람한테 부탁한 일이 있으면, 가장 최근 한 번만 적어 주세요</h2>
+    <p class="hint">예: 카톡에서 사진 여러 장 보내기</p>
+    <textarea name="q3_ask_others" maxlength="1000" aria-label="가장 최근에 부탁한 일"></textarea>
   </section>
 
-  <section class="q" data-step="scary">
+  <section class="block" data-step="scary">
     <div class="q-num">질문 5</div>
-    <div class="q-body">
-      <h2>잘못 누를까 봐 겁났던 화면이 있으세요?</h2>
-      <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
-      <textarea name="q4_scary" maxlength="1000" aria-label="겁났던 화면"></textarea>
-    </div>
+    <h2>잘못 누를까 봐 겁났던 화면이 있으세요?</h2>
+    <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
+    <textarea name="q4_scary" maxlength="1000" aria-label="겁났던 화면"></textarea>
   </section>
 
-  <section class="q" data-step="ai">
+  <section class="block" data-step="ai">
     <div class="q-num">질문 6</div>
-    <div class="q-body">
-      <h2>제미나이, ChatGPT, 빅스비 같은 AI에게 휴대폰 쓰는 법을 물어보신 적 있으세요?</h2>
-      <div class="choices" data-radio="q5_ai_used" style="margin-top:16px"></div>
-      <div id="ai-detail" hidden>
-        <p class="hint" style="margin-top:16px">무엇을 물어보셨어요? 알려 준 대로 해 보니 됐나요?</p>
-        <textarea name="q5_detail" maxlength="1000" aria-label="AI에게 물어본 것과 결과" style="margin-top:8px"></textarea>
-      </div>
+    <h2>제미나이, ChatGPT, 빅스비 같은 AI에게 휴대폰 쓰는 법을 물어보신 적 있으세요?</h2>
+    <div class="choices" data-radio="q5_ai_used" style="margin-top:20px"></div>
+    <div id="ai-detail" hidden>
+      <p class="hint" style="margin-top:20px">무엇을 물어보셨어요? 알려 준 대로 해 보니 됐나요?</p>
+      <textarea name="q5_detail" maxlength="1000" aria-label="AI에게 물어본 것과 결과" style="margin-top:8px"></textarea>
     </div>
   </section>
 
   <div class="submit-row">
-    <button type="submit" class="submit">제출하기</button>
+    <button type="submit" class="submit">다 했어요, 제출하기</button>
     <div id="msg" role="status"></div>
   </div>
   <footer>대구대학교 2026-2 문제해결형 답(DAP) · 팀 거제야허</footer>
@@ -292,13 +279,21 @@ function renderCard() {
   const prev = answers[t.name];
   if (prev) $("deck-choices").querySelector(`input[value="${CSS.escape(prev)}"]`).checked = true;
   $("deck-prev").disabled = idx === 0;
+  updateNextLabel();
+}
+// 자동으로 넘기지 않는다. 고른 것을 눈으로 확인한 뒤 "다음"을 누르게 한다 (고령자 지침: 분명한 반응, 되돌아갈 길).
+function updateNextLabel() {
+  const last = idx === TASKS.length - 1;
+  $("deck-skip").textContent = answers[TASKS[idx]?.name] ? (last ? "다 골랐어요" : "다음")
+                                                          : (last ? "건너뛰고 마치기" : "잘 모르겠어요, 건너뛰기");
 }
 $("deck-choices").addEventListener("change", e => {
   answers[TASKS[idx].name] = e.target.value;
+  updateNextLabel();
   updateProgress();
-  setTimeout(() => { idx++; renderCard(); }, 250);   // 누른 것이 보이게 잠깐 두고 넘긴다
 });
-$("deck-skip").addEventListener("click", () => { delete answers[TASKS[idx].name]; idx++; renderCard(); updateProgress(); });
+$("deck-skip").addEventListener("click", () => { idx++; renderCard(); updateProgress();
+  $("deck").scrollIntoView({ behavior: "smooth", block: "start" }); });
 $("deck-prev").addEventListener("click", () => { if (idx > 0) { idx--; renderCard(); } });
 $("deck-review").addEventListener("click", () => { idx = 0; renderCard(); });
 
@@ -341,7 +336,7 @@ function answered(s) {
 function updateProgress() {
   const n = steps.filter(answered).length;
   $("bar").style.width = `${(n / steps.length) * 100}%`;
-  $("bar-text").textContent = `${n} / ${steps.length}`;
+  $("bar-text").textContent = `질문 ${steps.length}개 중 ${n}개 답했어요`;
 }
 
 // 같은 기기에서 이미 제출했으면 감사 화면을 바로 보여 준다 (새로고침으로 두 번 내는 것 방지).
@@ -391,7 +386,7 @@ f.addEventListener("submit", async e => {
   } catch (err) {
     console.error(err);
     show("제출이 되지 않았습니다. 인터넷 연결을 확인하시고 잠시 뒤 다시 눌러 주세요.");
-    btn.disabled = false; btn.textContent = "제출하기";
+    btn.disabled = false; btn.textContent = "다 했어요, 제출하기";
   }
 });
 function show(t) { msg.textContent = t; }
