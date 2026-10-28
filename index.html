@@ -132,7 +132,6 @@
     <h2>먼저 간단히 여쭤볼게요</h2>
     <div class="sub-label">나이대</div><div class="choices" data-radio="age_band"></div>
     <div class="sub-label">쓰시는 휴대폰</div><div class="stack" data-radio="device"></div>
-    <div class="sub-label">스마트폰을 쓰신 지</div><div class="stack" data-radio="usage_years"></div>
   </section>
 
   <!-- 2. 나이대를 고르기 전 / 60대 이상 / 40·50대 에 따라 셋 중 하나만 보인다 -->
@@ -229,7 +228,6 @@ const SUPABASE_ANON_KEY = "sb_publishable_3QVy3gh9Ye0DxglzC7XtZA_YaIeerDe";
 const RADIOS = {
   age_band: [["40대", "40대"], ["50대", "50대"], ["60대", "60대"], ["70대", "70대"], ["80대 이상", "80대 이상"]],
   device: [["갤럭시(안드로이드)", "갤럭시(안드로이드)"], ["아이폰", "아이폰"], ["잘 모르겠어요", "모름"]],
-  usage_years: [["1년이 안 됐어요", "1년 미만"], ["1~5년", "1~5년"], ["5년이 넘었어요", "5년 이상"]],
   filled_by: [["제가 직접 했어요", "직접"], ["가족이 옆에서 도와줬어요", "도움"], ["가족이 대신 입력했어요", "대신"]],
   q5_ai_used: [["있어요", "있음"], ["없어요", "없음"]],
 };
@@ -369,7 +367,7 @@ f.addEventListener("submit", async e => {
   const elder = [...$("elder-choices").querySelectorAll("input:checked")].map(b => b.value);
   const row = {
     consent: true,
-    age_band: ageBand(), device: val("device"), usage_years: val("usage_years"), filled_by: val("filled_by"),
+    age_band: ageBand(), device: val("device"), filled_by: val("filled_by"),
     q2_tasks: isSenior() ? { ...answers } : {},
     q6_elder_tasks: isMiddleAge() && elder.length ? elder : null,
     q6_elder_family: isMiddleAge() ? val("q6_elder_family") : null,
