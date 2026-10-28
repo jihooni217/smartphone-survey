@@ -3,109 +3,100 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#f6f2ea">
+<meta name="theme-color" content="#fbf7ef">
 <title>스마트폰 사용 경험 설문</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Noto+Serif+KR:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   /*
-    방향: 잘 만든 종이 설문지. 미색 종이, 먹색 글씨, 강조는 주홍 하나.
-    글꼴: 명조(Noto Serif KR) = 제목·문항 번호·과업 이름 / 고딕(Noto Sans KR) = 나머지 전부
-    간격: 8px 단위 (8·16·24·32·48)   글자: 15·18·22·28·40
+    방향: 따뜻한 생활 잡지. 크림 바탕, 짙은 초록 하나, 둥근 제목 글꼴.
+    글꼴: 고운돋움 = 큰 제목·문항 제목·과업 이름 / IBM Plex Sans KR = 본문·버튼
+    간격: 8px 단위 (8·16·24·32·48·64)   글자: 15·18·22·26·34
+    중심 장면: 연초록 판 위의 큰 과업 이름 하나
   */
   :root {
-    --paper:#f6f2ea; --ink:#1b1a17; --muted:#5d584f; --rule:#d9d2c4; --field:#fffdf8;
-    --accent:#b4380a; --on-ink:#f6f2ea;
-    --serif:"Noto Serif KR", "Nanum Myeongjo", serif;
-    --sans:"Noto Sans KR", system-ui, -apple-system, sans-serif;
+    --bg:#fbf7ef; --ink:#23261f; --muted:#5f5a52; --line:#e6dfd1; --field:#ffffff;
+    --green:#1f5a43; --green-soft:#e3efe7; --on-green:#ffffff;
+    --head:"Gowun Dodum", sans-serif;
+    --body:"IBM Plex Sans KR", system-ui, -apple-system, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
-    :root { --paper:#16140f; --ink:#efe9dd; --muted:#b1a999; --rule:#3a352c; --field:#1e1b15;
-            --accent:#ff8a4c; --on-ink:#16140f; }
+    :root { --bg:#141a16; --ink:#ecefe8; --muted:#b4b8ae; --line:#2c352f; --field:#1b231e;
+            --green:#7fcfa6; --green-soft:#1f3329; --on-green:#0f1612; }
   }
   * { box-sizing:border-box; }
   html { -webkit-text-size-adjust:100%; }
-  body { margin:0; background:var(--paper); color:var(--ink); font:18px/1.7 var(--sans); word-break:keep-all; }
-  main { max-width:640px; margin:0 auto; padding:0 16px 48px; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:18px/1.7 var(--body); word-break:keep-all; }
+  main { max-width:600px; margin:0 auto; padding:0 20px 64px; }
   [hidden] { display:none !important; }
 
-  /* 진행: 맨 위 먹색 선 한 줄 */
-  .progress { position:sticky; top:0; z-index:10; background:var(--paper); padding:8px 0; display:flex; align-items:center; gap:16px; }
-  .progress-track { flex:1; height:3px; background:var(--rule); }
-  .progress-bar { height:100%; width:0; background:var(--ink); transition:width .3s; }
+  .progress { position:sticky; top:0; z-index:10; background:var(--bg); padding:12px 0 8px; display:flex; align-items:center; gap:16px; }
+  .progress-track { flex:1; height:6px; border-radius:99px; background:var(--line); overflow:hidden; }
+  .progress-bar { height:100%; width:0; border-radius:99px; background:var(--green); transition:width .3s; }
   .progress-text { font-size:15px; color:var(--muted); font-variant-numeric:tabular-nums; }
 
-  /* 머리 */
-  header { padding:32px 0 24px; border-bottom:2px solid var(--ink); }
-  .org { font-size:15px; color:var(--muted); margin:0 0 8px; letter-spacing:.02em; }
-  h1 { font-family:var(--serif); font-weight:700; font-size:36px; line-height:1.3; margin:0; letter-spacing:-.01em; }
+  header { padding:40px 0 24px; }
+  .org { font-size:15px; color:var(--muted); margin:0 0 16px; }
+  h1 { font-family:var(--head); font-weight:400; font-size:34px; line-height:1.35; margin:0; color:var(--green); }
+  h1 .sub { display:block; font-size:22px; color:var(--ink); margin-top:8px; }
 
-  .intro { padding:24px 0 32px; }
   .intro p { margin:0 0 16px; }
-  .facts { margin:0; padding:0; list-style:none; border-top:1px solid var(--rule); }
-  .facts li { padding:8px 0; border-bottom:1px solid var(--rule); font-size:16px; color:var(--muted); }
-  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px;
-             border:2px solid var(--accent); font-weight:700; cursor:pointer; }
-  .consent input { width:26px; height:26px; flex:none; accent-color:var(--accent); }
+  .facts { margin:0; padding-left:20px; color:var(--muted); font-size:16px; }
+  .facts li { margin:4px 0; }
+  .consent { display:flex; gap:16px; align-items:center; margin-top:24px; padding:16px 20px; border-radius:16px;
+             background:var(--green-soft); font-weight:700; cursor:pointer; }
+  .consent input { width:26px; height:26px; flex:none; accent-color:var(--green); }
   .note { font-size:15px; color:var(--muted); margin:8px 0 0; }
-  .accent { color:var(--accent); font-weight:700; }
+  .em { color:var(--green); font-weight:700; }
 
-  /* 문항: 카드 대신 선으로 나누고, 큰 명조 번호를 왼쪽 여백에 건다 */
-  .q { display:grid; grid-template-columns:48px 1fr; column-gap:16px; padding:32px 0; border-top:1px solid var(--rule); }
-  .q-num { font-family:var(--serif); font-weight:700; font-size:40px; line-height:1; color:var(--accent);
-           font-variant-numeric:tabular-nums; padding-top:2px; }
+  /* 문항: 상자 없이 여백으로 나눈다 */
+  .q { padding:48px 0 0; }
+  .q-num { font-size:15px; font-weight:700; color:var(--green); letter-spacing:.04em; margin-bottom:8px; }
   .q-body { min-width:0; }
-  h2 { font-size:22px; line-height:1.45; font-weight:700; margin:0; }
+  h2 { font-family:var(--head); font-weight:400; font-size:26px; line-height:1.4; margin:0; }
   .hint { color:var(--muted); font-size:16px; margin:8px 0 0; }
   .sub-label { font-weight:700; font-size:16px; margin:24px 0 8px; }
-  .q-body > .sub-label:first-of-type { margin-top:16px; }
 
-  /* 선택지: 각진 테두리, 고르면 먹색으로 채움 */
+  /* 선택지: 알약 모양 */
   .choices { display:flex; flex-wrap:wrap; gap:8px; }
   .stack { display:grid; gap:8px; }
   .choice { position:relative; display:block; }
   .choice input { position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
-  .choice span { display:flex; align-items:center; min-height:52px; padding:8px 16px;
-                 border:2px solid var(--ink); border-radius:4px; background:var(--field); font-weight:500; }
-  .choices .choice span { justify-content:center; }
-  .choice input:checked + span { background:var(--ink); color:var(--on-ink); font-weight:700; }
-  .choice input:focus-visible + span { outline:3px solid var(--accent); outline-offset:2px; }
+  .choice span { display:flex; align-items:center; min-height:52px; padding:8px 24px; border-radius:99px;
+                 border:2px solid var(--line); background:var(--field); font-weight:500; }
+  .choices .choice span { justify-content:center; padding:8px 20px; }
+  .choice input:checked + span { background:var(--green); border-color:var(--green); color:var(--on-green); font-weight:700; }
+  .choice input:focus-visible + span { outline:3px solid var(--green); outline-offset:3px; }
 
-  /* 과업 한 장씩 */
-  .deck-meta { display:flex; justify-content:space-between; align-items:baseline; font-size:15px; color:var(--muted);
-               margin-top:24px; padding-bottom:8px; border-bottom:1px solid var(--rule); }
-  .deck-count { font-family:var(--serif); font-weight:700; font-size:18px; color:var(--ink); font-variant-numeric:tabular-nums; }
-  .task-name { font-family:var(--serif); font-weight:700; font-size:28px; line-height:1.35; margin:16px 0 16px; }
+  /* 과업: 연초록 판 위에 이름 하나를 크게 */
+  .task-panel { margin-top:24px; padding:24px 24px 32px; border-radius:24px; background:var(--green-soft); }
+  .deck-meta { display:flex; justify-content:space-between; align-items:baseline; font-size:15px; color:var(--muted); }
+  .deck-count { font-weight:700; color:var(--green); font-variant-numeric:tabular-nums; }
+  .task-name { font-family:var(--head); font-size:34px; line-height:1.3; color:var(--green); margin:8px 0 0; }
+  .deck-choices-wrap { margin-top:16px; }
   .deck-nav { display:flex; justify-content:space-between; gap:8px; margin-top:16px; }
-  .ghost { min-height:48px; padding:8px 0; font:inherit; font-size:16px; color:var(--muted); background:none; border:0;
-           text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+  .ghost { min-height:48px; padding:8px 0; font:inherit; font-size:16px; color:var(--muted); background:none; border:0; cursor:pointer; }
   .ghost:disabled { visibility:hidden; }
-  .deck-done { margin-top:24px; padding:16px 0; border-top:1px solid var(--rule); }
-  .deck-done p { margin:0; font-weight:700; }
-  .gate { margin:0; color:var(--muted); }
+  .deck-done { margin-top:24px; padding:24px; border-radius:24px; background:var(--green-soft); }
+  .deck-done p { margin:0; font-weight:700; color:var(--green); }
 
-  textarea { width:100%; min-height:112px; margin-top:16px; padding:16px; font:inherit; color:var(--ink);
-             background:var(--field); border:2px solid var(--rule); border-radius:4px; resize:vertical; }
-  textarea:focus { outline:none; border-color:var(--ink); }
+  textarea { width:100%; min-height:112px; margin-top:16px; padding:16px 20px; font:inherit; color:var(--ink);
+             background:var(--field); border:2px solid var(--line); border-radius:16px; resize:vertical; }
+  textarea:focus { outline:none; border-color:var(--green); }
 
-  .submit-row { border-top:2px solid var(--ink); padding-top:24px; }
-  .submit { width:100%; min-height:60px; font:inherit; font-size:18px; font-weight:700; letter-spacing:.05em;
-            border:0; border-radius:4px; background:var(--ink); color:var(--on-ink); cursor:pointer; }
+  .submit-row { margin-top:64px; }
+  .submit { width:100%; min-height:64px; font:inherit; font-size:20px; font-weight:700;
+            border:0; border-radius:99px; background:var(--green); color:var(--on-green); cursor:pointer; }
   .submit:disabled { opacity:.55; cursor:default; }
-  #msg { margin-top:16px; font-weight:700; color:var(--accent); }
+  #msg { margin-top:16px; font-weight:700; color:#b3261e; }
+  @media (prefers-color-scheme: dark) { #msg { color:#ffb4a9; } }
 
-  #thanks { display:none; padding:64px 0; }
-  #thanks h2 { font-family:var(--serif); font-size:40px; line-height:1.3; margin:0 0 16px; padding-bottom:16px; border-bottom:2px solid var(--ink); }
+  #thanks { display:none; padding:96px 0 48px; }
+  #thanks h2 { font-size:34px; color:var(--green); margin:0 0 16px; }
   #thanks p { color:var(--muted); margin:0; }
 
-  footer { color:var(--muted); font-size:15px; margin-top:32px; }
-
-  @media (max-width:380px) {
-    .q { grid-template-columns:36px 1fr; column-gap:12px; }
-    .q-num { font-size:32px; }
-    h1 { font-size:30px; }
-  }
+  footer { color:var(--muted); font-size:15px; margin-top:48px; }
 </style>
 </head>
 <body>
@@ -118,7 +109,7 @@
 <form id="f" novalidate>
   <header>
     <p class="org">대구대학교 문제해결형 답(DAP) 프로젝트</p>
-    <h1>스마트폰 사용 경험 설문</h1>
+    <h1>휴대폰, 어디서 막히세요?<span class="sub">스마트폰 사용 경험 설문</span></h1>
   </header>
 
   <section class="intro">
@@ -132,13 +123,13 @@
       <li>응답은 이름 없이 이 프로젝트의 분석 자료로 보관하고, 결과 보고서에 통계로 실릴 수 있어요.</li>
     </ul>
     <label class="consent"><input type="checkbox" name="consent"> 안내를 확인했으며, 설문 참여와 응답 보관에 동의합니다</label>
-    <p class="note">글로 적는 칸에는 <span class="accent">이름·연락처·주소를 적지 말아 주세요.</span></p>
+    <p class="note">글로 적는 칸에는 <strong>이름·연락처·주소를 적지 말아 주세요.</strong></p>
   </section>
 
   <section class="q" data-step="basic">
-    <div class="q-num">01</div>
+    <div class="q-num">질문 1</div>
     <div class="q-body">
-      <h2>기본 정보</h2>
+      <h2>먼저 간단히 여쭤볼게요</h2>
       <div class="sub-label">나이대</div><div class="choices" data-radio="age_band"></div>
       <div class="sub-label">쓰시는 휴대폰</div><div class="choices" data-radio="device"></div>
       <div class="sub-label">스마트폰을 쓰신 지</div><div class="choices" data-radio="usage_years"></div>
@@ -148,17 +139,19 @@
 
   <!-- 2. 나이대를 고르기 전 / 60대 이상 / 40·50대 에 따라 셋 중 하나만 보인다 -->
   <section class="q" data-step="tasks">
-    <div class="q-num">02</div>
+    <div class="q-num">질문 2</div>
     <div class="q-body">
-      <div id="gate-age"><h2>나이대에 맞는 질문</h2><p class="gate hint">1번에서 나이대를 먼저 골라 주세요. 여기에 질문이 나와요.</p></div>
+      <div id="gate-age"><h2>나이대에 맞는 질문이 여기 나와요</h2><p class="hint">질문 1에서 나이대를 먼저 골라 주세요.</p></div>
 
       <div id="deck" hidden>
         <h2>아래 일들은 어떠세요?</h2>
-        <p class="hint">일마다 가장 가까운 것 하나를 눌러 주세요. 누르면 다음 일로 넘어가요.</p>
+        <p class="hint">가장 가까운 것 하나를 누르면 다음 일로 넘어가요.</p>
         <div id="deck-card">
-          <div class="deck-meta"><span id="deck-group"></span><span class="deck-count" id="deck-count"></span></div>
-          <div class="task-name" id="deck-task"></div>
-          <div class="stack" id="deck-choices"></div>
+          <div class="task-panel">
+            <div class="deck-meta"><span id="deck-group"></span><span class="deck-count" id="deck-count"></span></div>
+            <div class="task-name" id="deck-task"></div>
+          </div>
+          <div class="stack deck-choices-wrap" id="deck-choices"></div>
           <div class="deck-nav">
             <button type="button" class="ghost" id="deck-prev">← 이전</button>
             <button type="button" class="ghost" id="deck-skip">잘 모르겠어요, 넘어가기 →</button>
@@ -171,35 +164,35 @@
       </div>
 
       <div id="elder" hidden>
-        <h2>부모님 등 60대 이상 가족분이 휴대폰 때문에 도와 달라고 하시는 일을 모두 골라 주세요.</h2>
-        <p class="hint"><span class="accent">40·50대이신 분께만</span> 여쭤봐요. 여러 개 골라도 돼요.</p>
-        <div class="stack" id="elder-choices" style="margin-top:16px"></div>
-        <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요.</div>
+        <h2>부모님 등 60대 이상 가족분이 휴대폰 때문에 도와 달라고 하시는 일을 모두 골라 주세요</h2>
+        <p class="hint"><span class="em">40·50대이신 분께만</span> 여쭤봐요. 여러 개 골라도 돼요.</p>
+        <div class="stack" id="elder-choices" style="margin-top:24px"></div>
+        <div class="sub-label">그 밖에 부탁하시는 일이 있으면 적어 주세요</div>
         <textarea name="q6_elder_family" maxlength="1000" aria-label="그 밖에 가족이 부탁하는 일" style="margin-top:0"></textarea>
       </div>
     </div>
   </section>
 
   <section class="q" data-step="other">
-    <div class="q-num">03</div>
+    <div class="q-num">질문 3</div>
     <div class="q-body">
-      <h2>위에 없는 일 중에 막혔던 일이 있으면 적어 주세요.</h2>
+      <h2>위에 없는 일 중에 막혔던 일이 있으면 적어 주세요</h2>
       <p class="hint">없으시면 넘어가셔도 돼요.</p>
       <textarea name="q2_other" maxlength="1000" aria-label="목록에 없는 막힌 일"></textarea>
     </div>
   </section>
 
   <section class="q" data-step="recent">
-    <div class="q-num">04</div>
+    <div class="q-num">질문 4</div>
     <div class="q-body">
-      <h2>최근에 휴대폰으로 하다가 다른 사람한테 부탁한 일이 있으면, 가장 최근 한 번만 적어 주세요.</h2>
+      <h2>최근에 휴대폰으로 하다가 다른 사람한테 부탁한 일, 가장 최근 한 번만 적어 주세요</h2>
       <p class="hint">예: 카톡에서 사진 여러 장 보내기</p>
       <textarea name="q3_ask_others" maxlength="1000" aria-label="가장 최근에 부탁한 일"></textarea>
     </div>
   </section>
 
   <section class="q" data-step="scary">
-    <div class="q-num">05</div>
+    <div class="q-num">질문 5</div>
     <div class="q-body">
       <h2>잘못 누를까 봐 겁났던 화면이 있으세요?</h2>
       <p class="hint">어떤 앱의 어떤 화면이었는지 적어 주세요.</p>
@@ -208,7 +201,7 @@
   </section>
 
   <section class="q" data-step="ai">
-    <div class="q-num">06</div>
+    <div class="q-num">질문 6</div>
     <div class="q-body">
       <h2>제미나이, ChatGPT, 빅스비 같은 AI에게 휴대폰 쓰는 법을 물어보신 적 있으세요?</h2>
       <div class="choices" data-radio="q5_ai_used" style="margin-top:16px"></div>
@@ -227,8 +220,8 @@
 </form>
 
 <div id="thanks" role="status">
-  <h2>고맙습니다.</h2>
-  <p>답해 주신 내용은 잘 받았어요. 이제 창을 닫으셔도 돼요.</p>
+  <h2>고맙습니다</h2>
+  <p>답해 주신 내용은 잘 받았어요.<br>이제 창을 닫으셔도 돼요.</p>
 </div>
 </main>
 
@@ -288,7 +281,7 @@ function renderCard() {
   $("deck-done").hidden = !done;
   if (done) {
     const n = Object.keys(answers).length;
-    $("deck-done-text").textContent = `${TASKS.length}개 중 ${n}개에 답하셨어요. 아래 3번으로 넘어가 주세요.`;
+    $("deck-done-text").textContent = `${TASKS.length}개 중 ${n}개에 답하셨어요. 아래 질문 3으로 넘어가 주세요.`;
     return;
   }
   const t = TASKS[idx];
