@@ -142,7 +142,8 @@
 
     <div id="deck" hidden>
       <h2>아래 일들은 어떠세요?</h2>
-      <p class="hint">가장 가까운 것 하나를 고르고 <strong>다음</strong>을 눌러 주세요.</p>
+      <p class="hint">가장 가까운 것 하나를 고르고 <strong>다음</strong>을 눌러 주세요.
+        카드 14장을 끝까지 넘기면 다음 질문이 나와요.</p>
       <div id="deck-card">
         <div class="deck-meta"><span id="deck-group"></span><span class="deck-count" id="deck-count"></span></div>
         <div class="task-name" id="deck-task"></div>
@@ -169,7 +170,9 @@
   </section>
 
   <!-- 10/28: 글로 적는 칸은 서술형 무응답이 많아(Pew 평균 약 18%) 줄이고, 고르기로 바꿨다. 남은 글 칸은 모두 선택. -->
-  <section class="block" data-step="scary">
+  <!-- 11/1: 과업 카드를 첫 장만 답하고 아래로 내려가 제출한 응답이 5건 중 3건(80대 2건 포함).
+       카드를 끝까지 넘기기 전에는 아래 질문과 제출 버튼을 숨긴다 (class="after-deck"). -->
+  <section class="block after-deck" data-step="scary">
     <div class="q-num">질문 3</div>
     <h2>잘못 누를까 봐 겁났던 화면이 있으세요?</h2>
     <p class="hint">해당하는 것을 모두 골라 주세요.</p>
@@ -180,7 +183,7 @@
     </div>
   </section>
 
-  <section class="block" data-step="ai">
+  <section class="block after-deck" data-step="ai">
     <div class="q-num">질문 4</div>
     <h2>제미나이, ChatGPT, 빅스비 같은 AI에게 휴대폰 쓰는 법을 물어보신 적 있으세요?</h2>
     <div class="choices" data-radio="q5_ai_used" style="margin-top:20px"></div>
@@ -190,7 +193,7 @@
     </div>
   </section>
 
-  <section class="block" data-step="other">
+  <section class="block after-deck" data-step="other">
     <div class="q-num">질문 5 · 선택</div>
     <h2>위에 없는 일 중에 막혔거나 다른 사람에게 부탁한 일이 더 있으면 적어 주세요</h2>
     <p class="hint">없으시면 넘어가셔도 돼요. 예: 사진을 컴퓨터로 옮기기</p>
@@ -198,13 +201,13 @@
   </section>
 
   <!-- 대신 입력한 응답을 분석 때 구분하려고 묻는다. 기본 정보에 두면 어색해서 마지막에 둔다. -->
-  <section class="block">
+  <section class="block after-deck">
     <div class="q-num">마지막으로</div>
     <h2>설문은 직접 하셨나요, 누가 도와드렸나요?</h2>
     <div class="stack" data-radio="filled_by" style="margin-top:20px"></div>
   </section>
 
-  <div class="submit-row">
+  <div class="submit-row after-deck">
     <button type="submit" class="submit">다 했어요, 제출하기</button>
     <div id="msg" role="status"></div>
   </div>
@@ -215,6 +218,8 @@
   <h2>고맙습니다.</h2>
   <p class="thanks-main">알려 주신 이야기로 더 쉬운 안내를 만들어 볼게요.</p>
   <p class="thanks-close">이 창은 닫으셔도 돼요.</p>
+  <!-- 11/1: 한 폰으로 가족 여러 명이 차례로 응답할 수 있게 한다 -->
+  <button type="button" class="btn btn-sub" id="again" style="width:100%; margin-top:40px">다른 분이 이어서 응답하기</button>
 </div>
 </main>
 
@@ -271,8 +276,16 @@ const isMiddleAge = () => ["40대", "50대"].includes(ageBand());
 // ── 과업 카드: 한 번에 하나씩 ──
 const answers = {};
 let idx = 0;
+let deckFinished = false;  // 한 번 끝까지 넘기면 "처음부터 다시 보기"를 해도 아래 질문은 계속 보인다
+function showAfterDeck() {
+  const open = !!ageBand() && deckFinished;
+  document.querySelectorAll(".after-deck").forEach(el => el.hidden = !open);
+  $("elder").hidden = !(open && isMiddleAge());
+}
 function renderCard() {
   const done = idx >= TASKS.length;
+  if (done) deckFinished = true;
+  showAfterDeck();
   $("deck-card").hidden = done;
   $("deck-done").hidden = !done;
   if (done) {
@@ -330,7 +343,6 @@ $("scary-choices").addEventListener("change", () => {
 function applyAge() {
   $("gate-age").hidden = !!ageBand();
   $("deck").hidden = !ageBand();
-  $("elder").hidden = !isMiddleAge();
   if (!isMiddleAge()) {
     $("elder-choices").querySelectorAll("input").forEach(b => b.checked = false);
     f.elements.q6_elder_family.value = "";
@@ -370,6 +382,10 @@ function showThanks() {
   window.scrollTo(0, 0);
 }
 try { if (localStorage.getItem(DONE_KEY)) showThanks(); } catch (_) {}
+$("again").addEventListener("click", () => {
+  try { localStorage.removeItem(DONE_KEY); } catch (_) {}
+  location.reload();
+});
 
 applyAge();
 updateProgress();
@@ -381,7 +397,12 @@ f.addEventListener("submit", async e => {
     f.elements.consent.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
-  const elder = [...$("elder-choices").querySelectorAll("input:checked")].map(b => b.value);
+  if (!deckFinished) {
+    show("질문 2의 카드를 끝까지 넘겨 주세요.");
+    $("deck").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const elder =[...$("elder-choices").querySelectorAll("input:checked")].map(b => b.value);
   const row = {
     consent: true,
     age_band: ageBand(), device: val("device"), filled_by: val("filled_by"),
